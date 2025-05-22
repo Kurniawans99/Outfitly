@@ -1,0 +1,20 @@
+# Gunakan base image Node.js
+FROM node:18-alpine AS builder
+
+# Set direktori kerja di dalam container
+WORKDIR /usr/src/app/backend
+
+# Salin package.json dan package-lock.json (jika ada)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Salin semua file dari folder backend
+COPY . .
+
+# Port
+EXPOSE 5500
+
+# Perintah untuk menjalankan aplikasi backend
+CMD [ "npm", "start" ]

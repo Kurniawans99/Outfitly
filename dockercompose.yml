@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend # Path ke folder backend Anda
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000" # Map port host 5000 ke port container 5000 (sesuaikan jika berbeda)
+    environment:
+      # Definisikan environment variables yang dibutuhkan backend Anda di sini
+      # Contoh:
+      # NODE_ENV: development
+      # MONGODB_URI: mongodb://mongo:27017/nama_database_anda # Jika MongoDB juga di-containerize
+      # JWT_SECRET: rahasia_jwt_anda
+      # PORT: 5000 # Jika port diatur melalui env var
+    volumes:
+      - ./backend:/usr/src/app/backend # Untuk development, sinkronisasi kode
+      - /usr/src/app/backend/node_modules # Pastikan node_modules di container tidak tertimpa
+    # depends_on:
+    #   - mongo # Jika Anda menambahkan service MongoDB
+
+  frontend:
+    build:
+      context: ./frontend # Path ke folder frontend Anda
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map port host 3000 ke port container Nginx 80
+    volumes:
+      - ./frontend:/usr/src/app/frontend # Untuk development, sinkronisasi kode
+      - /usr/src/app/frontend/node_modules # Pastikan node_modules di container tidak tertimpa
+    # depends_on:
+    #   - backend # Jika frontend perlu backend saat build atau runtime awal
+
+  # Opsional: Tambahkan service MongoDB jika Anda ingin menjalankannya di Docker juga
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-data:/data/db # Persistent data untuk MongoDB
+
+# Opsional: Definisikan volume untuk data persisten (misalnya untuk database)
+# volumes:
+#   mongo-data:
