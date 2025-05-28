@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, User, Lock } from "lucide-react";
+import { Eye, EyeOff, UserCircle, Mail, Lock, CheckCircle } from "lucide-react";
 
-const SignIn = () => {
+const SignUp = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Tambahkan logika autentikasi di sini
+    if (password !== confirmPassword) {
+      alert("Password dan Konfirmasi Password tidak cocok!");
+      return;
+    }
+    // TODO: Tambahkan logika registrasi di sini
+    console.log("Full Name:", fullName);
     console.log("Email:", email);
     console.log("Password:", password);
-    // navigate('/dashboard');
+    // navigate('/signin');
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Tambahkan logika login Google di sini
-    console.log("Login with Google");
+  const handleGoogleSignUp = () => {
+    // TODO: Tambahkan logika sign up Google di sini
+    console.log("Sign up with Google");
   };
 
   return (
@@ -28,24 +35,46 @@ const SignIn = () => {
       <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-indigo-800 rounded-full opacity-3 blur-xl"></div>
       <div className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-purple-700 rounded-full opacity-3 blur-lg"></div>
 
-      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-md relative z-10">
+      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-lg relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Outfitly</h1>
-          <p className="text-gray-400 text-sm">Selamat datang kembali!</p>
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Buat Akun Outfitly
+          </h1>
+          <p className="text-gray-400 text-sm">
+            Gabung dan temukan inspirasi gayamu!
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <User className="text-gray-500 w-5 h-5" />
+                <UserCircle className="text-gray-500 w-5 h-5" />
+              </div>
+              <input
+                type="text"
+                name="fullname"
+                id="fullname"
+                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
+                placeholder="Nama Kamu"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Mail className="text-gray-500 w-5 h-5" />
               </div>
               <input
                 type="email"
-                name="email"
-                id="email"
+                name="email_signup"
+                id="email_signup"
                 className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="hello@samuelmay.co"
+                placeholder="kamu@contoh.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -60,10 +89,10 @@ const SignIn = () => {
               </div>
               <input
                 type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
+                name="password_signup"
+                id="password_signup"
                 className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="PASSWORD"
+                placeholder="Minimal 8 karakter"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -82,11 +111,40 @@ const SignIn = () => {
             </div>
           </div>
 
+          <div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <CheckCircle className="text-gray-500 w-5 h-5" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="confirm_password"
+                id="confirm_password"
+                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
+                placeholder="Ulangi password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-3 right-3"
+              >
+                {showPassword ? (
+                  <Eye className="w-5 h-5 text-gray-500" />
+                ) : (
+                  <EyeOff className="w-5 h-5 text-gray-500" />
+                )}
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-white text-black font-medium rounded-xl py-3 px-6 hover:bg-gray-100 focus:ring-4 focus:ring-white/20 transition-all duration-200 transform hover:scale-105"
+            className="w-full bg-white text-black font-medium rounded-xl py-3 px-6 hover:bg-gray-100 focus:ring-4 focus:ring-white/20 transition-all duration-200 transform hover:scale-105 mt-6"
           >
-            LOG IN
+            SIGN UP
           </button>
 
           <div className="relative">
@@ -100,7 +158,7 @@ const SignIn = () => {
 
           <button
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignUp}
             className="w-full bg-gray-800/50 border border-gray-700/50 text-white font-medium rounded-xl py-3 px-6 hover:bg-gray-700/50 focus:ring-4 focus:ring-gray-600/20 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -121,25 +179,16 @@ const SignIn = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            <span>Login dengan Google</span>
+            <span>Daftar dengan Google</span>
           </button>
 
-          <div className="text-center">
+          <p className="text-sm text-gray-400 text-center mt-6">
+            Sudah punya akun?{" "}
             <Link
-              to="/forgot-password"
-              className="text-gray-400 hover:text-white text-sm transition-colors duration-200 underline"
-            >
-              FORGOT YOUR PASSWORD?
-            </Link>
-          </div>
-
-          <p className="text-sm text-gray-400 text-center mt-8">
-            Belum punya akun?{" "}
-            <Link
-              to="/signup"
+              to="/signin"
               className="text-white hover:text-purple-300 font-medium transition-colors duration-200"
             >
-              Sign Up disini
+              Sign In disini
             </Link>
           </p>
         </form>
@@ -148,4 +197,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
