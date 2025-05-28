@@ -2,7 +2,18 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, UserCircle, Mail, Lock, CheckCircle } from "lucide-react";
 
-const SignUp = () => {
+const changeBackgroundColor = (
+  e: React.MouseEvent<HTMLElement>,
+  color: string
+) => {
+  e.currentTarget.style.backgroundColor = color;
+};
+
+const changeTextColor = (e: React.MouseEvent<HTMLElement>, color: string) => {
+  e.currentTarget.style.color = color;
+};
+
+const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,151 +26,220 @@ const SignUp = () => {
       alert("Password dan Konfirmasi Password tidak cocok!");
       return;
     }
-    // TODO: Tambahkan logika registrasi di sini
     console.log("Full Name:", fullName);
     console.log("Email:", email);
     console.log("Password:", password);
-    // navigate('/signin');
   };
 
   const handleGoogleSignUp = () => {
-    // TODO: Tambahkan logika sign up Google di sini
     console.log("Sign up with Google");
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(135deg, #2F4156 0%, #567C8D 50%, #C8D9E6 100%)",
+      }}
+    >
       {/* Background decorative elements */}
-      <div className="absolute top-16 left-16 w-40 h-40 bg-purple-800 rounded-full opacity-5 blur-2xl"></div>
-      <div className="absolute bottom-16 right-16 w-48 h-48 bg-blue-800 rounded-full opacity-5 blur-2xl"></div>
-      <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-indigo-800 rounded-full opacity-3 blur-xl"></div>
-      <div className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-purple-700 rounded-full opacity-3 blur-lg"></div>
+      <div
+        className="absolute top-16 left-16 w-40 h-40 rounded-full opacity-10 blur-2xl"
+        style={{ backgroundColor: "#567C8D" }}
+      />
+      <div
+        className="absolute bottom-16 right-16 w-48 h-48 rounded-full opacity-10 blur-2xl"
+        style={{ backgroundColor: "#2F4156" }}
+      />
+      <div
+        className="absolute top-1/3 left-1/3 w-32 h-32 rounded-full opacity-8 blur-xl"
+        style={{ backgroundColor: "#F5EFEB" }}
+      />
+      <div
+        className="absolute bottom-1/3 right-1/3 w-24 h-24 rounded-full opacity-8 blur-lg"
+        style={{ backgroundColor: "#567C8D" }}
+      />
 
-      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-lg relative z-10">
+      <div
+        className="backdrop-blur-xl border shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-lg relative z-10"
+        style={{
+          backgroundColor: "rgba(47, 65, 86, 0.85)",
+          borderColor: "rgba(86, 124, 141, 0.3)",
+        }}
+      >
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold mb-2" style={{ color: "#F5EFEB" }}>
             Buat Akun Outfitly
           </h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-sm" style={{ color: "#C8D9E6" }}>
             Gabung dan temukan inspirasi gayamu!
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <UserCircle className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type="text"
-                name="fullname"
-                id="fullname"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="Nama Kamu"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
+          {/* Full Name Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <UserCircle className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type="text"
+              name="fullname"
+              id="fullname"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="Nama Kamu"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
           </div>
 
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type="email"
-                name="email_signup"
-                id="email_signup"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="kamu@contoh.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          {/* Email Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Mail className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type="email"
+              name="email_signup"
+              id="email_signup"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="kamu@contoh.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
 
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password_signup"
-                id="password_signup"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="Minimal 8 karakter"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-3 right-3"
-              >
-                {showPassword ? (
-                  <Eye className="w-5 h-5 text-gray-500" />
-                ) : (
-                  <EyeOff className="w-5 h-5 text-gray-500" />
-                )}
-              </button>
+          {/* Password Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Lock className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password_signup"
+              id="password_signup"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="Minimal 8 karakter"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-3 right-3 hover:opacity-80 transition-opacity"
+            >
+              {showPassword ? (
+                <Eye className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              ) : (
+                <EyeOff className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              )}
+            </button>
           </div>
 
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <CheckCircle className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="confirm_password"
-                id="confirm_password"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="Ulangi password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-3 right-3"
-              >
-                {showPassword ? (
-                  <Eye className="w-5 h-5 text-gray-500" />
-                ) : (
-                  <EyeOff className="w-5 h-5 text-gray-500" />
-                )}
-              </button>
+          {/* Confirm Password Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <CheckCircle className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirm_password"
+              id="confirm_password"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="Ulangi password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-3 right-3 hover:opacity-80 transition-opacity"
+            >
+              {showPassword ? (
+                <Eye className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              ) : (
+                <EyeOff className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              )}
+            </button>
           </div>
 
+          {/* Sign Up Button */}
           <button
             type="submit"
-            className="w-full bg-white text-black font-medium rounded-xl py-3 px-6 hover:bg-gray-100 focus:ring-4 focus:ring-white/20 transition-all duration-200 transform hover:scale-105 mt-6"
+            className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 mt-6"
+            style={{
+              backgroundColor: "#F5EFEB",
+              color: "#2F4156",
+              boxShadow: "0 4px 12px rgba(245, 239, 235, 0.2)",
+            }}
+            onMouseEnter={(e) => changeBackgroundColor(e, "#FFFFFF")}
+            onMouseLeave={(e) => changeBackgroundColor(e, "#F5EFEB")}
           >
             SIGN UP
           </button>
 
+          {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700"></div>
+              <div
+                className="w-full border-t"
+                style={{ borderColor: "rgba(86, 124, 141, 0.4)" }}
+              />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-900/60 text-gray-400">atau</span>
+              <span
+                className="px-2"
+                style={{
+                  backgroundColor: "rgba(47, 65, 86, 0.85)",
+                  color: "#C8D9E6",
+                }}
+              >
+                atau
+              </span>
             </div>
           </div>
 
+          {/* Google Sign Up */}
           <button
             type="button"
             onClick={handleGoogleSignUp}
-            className="w-full bg-gray-800/50 border border-gray-700/50 text-white font-medium rounded-xl py-3 px-6 hover:bg-gray-700/50 focus:ring-4 focus:ring-gray-600/20 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
+            className="w-full border font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
+            style={{
+              backgroundColor: "rgba(86, 124, 141, 0.3)",
+              borderColor: "rgba(200, 217, 230, 0.3)",
+              color: "#F5EFEB",
+            }}
+            onMouseEnter={(e) =>
+              changeBackgroundColor(e, "rgba(86, 124, 141, 0.5)")
+            }
+            onMouseLeave={(e) =>
+              changeBackgroundColor(e, "rgba(86, 124, 141, 0.3)")
+            }
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -182,11 +262,14 @@ const SignUp = () => {
             <span>Daftar dengan Google</span>
           </button>
 
-          <p className="text-sm text-gray-400 text-center mt-6">
+          <p className="text-sm text-center mt-6" style={{ color: "#C8D9E6" }}>
             Sudah punya akun?{" "}
             <Link
-              to="/signin"
-              className="text-white hover:text-purple-300 font-medium transition-colors duration-200"
+              to={"/signin"}
+              className="font-medium transition-colors duration-200"
+              style={{ color: "#F5EFEB" }}
+              onMouseEnter={(e) => changeTextColor(e, "#567C8D")}
+              onMouseLeave={(e) => changeTextColor(e, "#F5EFEB")}
             >
               Sign In disini
             </Link>

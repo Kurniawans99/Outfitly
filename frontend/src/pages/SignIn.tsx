@@ -2,7 +2,18 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, User, Lock } from "lucide-react";
 
-const SignIn = () => {
+const changeBackgroundColor = (
+  e: React.MouseEvent<HTMLElement>,
+  color: string
+) => {
+  e.currentTarget.style.backgroundColor = color;
+};
+
+const changeTextColor = (e: React.MouseEvent<HTMLElement>, color: string) => {
+  e.currentTarget.style.color = color;
+};
+
+const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,87 +32,155 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(135deg, #2F4156 0%, #567C8D 50%, #C8D9E6 100%)",
+      }}
+    >
       {/* Background decorative elements */}
-      <div className="absolute top-16 left-16 w-40 h-40 bg-purple-800 rounded-full opacity-5 blur-2xl"></div>
-      <div className="absolute bottom-16 right-16 w-48 h-48 bg-blue-800 rounded-full opacity-5 blur-2xl"></div>
-      <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-indigo-800 rounded-full opacity-3 blur-xl"></div>
-      <div className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-purple-700 rounded-full opacity-3 blur-lg"></div>
+      <div
+        className="absolute top-16 left-16 w-40 h-40 rounded-full opacity-10 blur-2xl"
+        style={{ backgroundColor: "#567C8D" }}
+      />
+      <div
+        className="absolute bottom-16 right-16 w-48 h-48 rounded-full opacity-10 blur-2xl"
+        style={{ backgroundColor: "#2F4156" }}
+      />
+      <div
+        className="absolute top-1/3 left-1/3 w-32 h-32 rounded-full opacity-8 blur-xl"
+        style={{ backgroundColor: "#F5EFEB" }}
+      />
+      <div
+        className="absolute bottom-1/3 right-1/3 w-24 h-24 rounded-full opacity-8 blur-lg"
+        style={{ backgroundColor: "#567C8D" }}
+      />
 
-      <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-md relative z-10">
+      <div
+        className="backdrop-blur-xl border shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-md relative z-10"
+        style={{
+          backgroundColor: "rgba(47, 65, 86, 0.85)",
+          borderColor: "rgba(86, 124, 141, 0.3)",
+        }}
+      >
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Outfitly</h1>
-          <p className="text-gray-400 text-sm">Selamat datang kembali!</p>
+          <h1 className="text-4xl font-bold mb-2" style={{ color: "#F5EFEB" }}>
+            Outfitly
+          </h1>
+          <p className="text-sm" style={{ color: "#C8D9E6" }}>
+            Selamat datang kembali!
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <User className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="hello@samuelmay.co"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          {/* Email Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <User className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="hello@samuelmay.co"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
 
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="text-gray-500 w-5 h-5" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                className="bg-gray-800/50 border border-gray-700/50 text-white text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent block w-full pl-12 pr-4 py-3 placeholder-gray-500 transition-all duration-200"
-                placeholder="PASSWORD"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-3 right-3"
-              >
-                {showPassword ? (
-                  <Eye className="w-5 h-5 text-gray-500" />
-                ) : (
-                  <EyeOff className="w-5 h-5 text-gray-500" />
-                )}
-              </button>
+          {/* Password Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Lock className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              id="password"
+              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
+              style={{
+                backgroundColor: "rgba(86, 124, 141, 0.2)",
+                borderColor: "rgba(200, 217, 230, 0.3)",
+                color: "#F5EFEB",
+              }}
+              placeholder="PASSWORD"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-3 right-3 hover:opacity-80 transition-opacity"
+            >
+              {showPassword ? (
+                <Eye className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              ) : (
+                <EyeOff className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              )}
+            </button>
           </div>
 
+          {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-white text-black font-medium rounded-xl py-3 px-6 hover:bg-gray-100 focus:ring-4 focus:ring-white/20 transition-all duration-200 transform hover:scale-105"
+            className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105"
+            style={{
+              backgroundColor: "#F5EFEB",
+              color: "#2F4156",
+              boxShadow: "0 4px 12px rgba(245, 239, 235, 0.2)",
+            }}
+            onMouseEnter={(e) => changeBackgroundColor(e, "#FFFFFF")}
+            onMouseLeave={(e) => changeBackgroundColor(e, "#F5EFEB")}
           >
             LOG IN
           </button>
 
+          {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700"></div>
+              <div
+                className="w-full border-t"
+                style={{ borderColor: "rgba(86, 124, 141, 0.4)" }}
+              />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-900/60 text-gray-400">atau</span>
+              <span
+                className="px-2"
+                style={{
+                  backgroundColor: "rgba(47, 65, 86, 0.85)",
+                  color: "#C8D9E6",
+                }}
+              >
+                atau
+              </span>
             </div>
           </div>
 
+          {/* Google Login */}
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full bg-gray-800/50 border border-gray-700/50 text-white font-medium rounded-xl py-3 px-6 hover:bg-gray-700/50 focus:ring-4 focus:ring-gray-600/20 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
+            className="w-full border font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
+            style={{
+              backgroundColor: "rgba(86, 124, 141, 0.3)",
+              borderColor: "rgba(200, 217, 230, 0.3)",
+              color: "#F5EFEB",
+            }}
+            onMouseEnter={(e) =>
+              changeBackgroundColor(e, "rgba(86, 124, 141, 0.5)")
+            }
+            onMouseLeave={(e) =>
+              changeBackgroundColor(e, "rgba(86, 124, 141, 0.3)")
+            }
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -124,22 +203,30 @@ const SignIn = () => {
             <span>Login dengan Google</span>
           </button>
 
+          {/* Forgot Password */}
           <div className="text-center">
             <Link
               to="/forgot-password"
-              className="text-gray-400 hover:text-white text-sm transition-colors duration-200 underline"
+              className="text-sm transition-colors duration-200 underline hover:opacity-80"
+              style={{ color: "#C8D9E6" }}
+              onMouseEnter={(e) => changeTextColor(e, "#F5EFEB")}
+              onMouseLeave={(e) => changeTextColor(e, "#C8D9E6")}
             >
               FORGOT YOUR PASSWORD?
             </Link>
           </div>
 
-          <p className="text-sm text-gray-400 text-center mt-8">
+          {/* Sign Up */}
+          <p className="text-sm text-center mt-8" style={{ color: "#C8D9E6" }}>
             Belum punya akun?{" "}
             <Link
               to="/signup"
-              className="text-white hover:text-purple-300 font-medium transition-colors duration-200"
+              className="font-medium transition-colors duration-200"
+              style={{ color: "#F5EFEB" }}
+              onMouseEnter={(e) => changeTextColor(e, "#567C8D")}
+              onMouseLeave={(e) => changeTextColor(e, "#F5EFEB")}
             >
-              Sign Up disini
+              Sign Up di sini
             </Link>
           </p>
         </form>

@@ -1,26 +1,26 @@
 import { ScanLine, BrainCircuit, Zap } from "lucide-react";
-const steps = [
-  {
-    icon: ScanLine,
-    title: "1. Unggah atau Scan",
-    description:
-      "Digitalisasikan koleksi pakaian di lemari Anda dengan mudah melalui foto atau scan.",
-  },
-  {
-    icon: BrainCircuit,
-    title: "2. Analisis AI Cerdas",
-    description:
-      "Teknologi AI kami menganalisis warna, gaya, dan jenis setiap pakaian Anda.",
-  },
-  {
-    icon: Zap,
-    title: "3. Dapatkan Rekomendasi",
-    description:
-      "Terima saran kombinasi outfit yang personal dan cocok untuk berbagai acara.",
-  },
-];
-
 export function HowItWorksSection() {
+  const steps = [
+    {
+      icon: ScanLine,
+      title: "1. Unggah atau Scan",
+      description:
+        "Digitalisasikan koleksi pakaian di lemari Anda dengan mudah melalui foto atau scan.",
+    },
+    {
+      icon: BrainCircuit,
+      title: "2. Analisis AI Cerdas",
+      description:
+        "Teknologi AI kami menganalisis warna, gaya, dan jenis setiap pakaian Anda.",
+    },
+    {
+      icon: Zap,
+      title: "3. Dapatkan Rekomendasi",
+      description:
+        "Terima saran kombinasi outfit yang personal dan cocok untuk berbagai acara.",
+    },
+  ];
+
   return (
     <section id="howitworks" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-6">
@@ -37,10 +37,10 @@ export function HowItWorksSection() {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="bg-slate-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center"
+              className="bg-stone-50 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-center border border-stone-200"
             >
               <div className="flex justify-center mb-6">
-                <div className="bg-sky-500 text-white p-4 rounded-full">
+                <div className="bg-teal-600 text-white p-4 rounded-full shadow-lg">
                   <step.icon className="h-8 w-8" />
                 </div>
               </div>
