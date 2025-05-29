@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"; // Jika menggunakan react-router
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Shirt,
@@ -6,9 +6,8 @@ import {
   CalendarDays,
   Users,
   Settings,
-  PackagePlus, // Contoh untuk Tambah Pakaian
+  PackagePlus,
 } from "lucide-react";
-import { cn } from "@/lib/utils"; // utilitas dari Shadcn UI
 import { Button } from "@/components/ui/button";
 
 const navItems = [
