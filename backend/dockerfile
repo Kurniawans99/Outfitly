@@ -1,21 +1,22 @@
-# --- Stage 1: install dependencies
-FROM node:18-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+FROM node:20-alpine AS development
 
-# --- Stage 2: build (tidak ada build step kalau cuma JS)
-# Kita langsung copy dan siap untuk dijalankan
+# Tentukan direktori kerja di dalam container
+WORKDIR /usr/src/app
 
-FROM node:18-alpine AS runner
-WORKDIR /app
+# Salin package.json dan package-lock.json 
+COPY package*.json ./
 
-# Copy dependencies dari stage sebelumnya
-COPY --from=deps /app/node_modules ./node_modules
+# Install dependencies
+RUN npm install
+
+# Salin sisa kode aplikasi
 COPY . .
 
-# Expose port sesuai pengaturan (misal 5000)
+# Backend Anda menggunakan nodemon untuk development, yang sudah ada di devDependencies.
+# Pastikan port yang diekspos sesuai dengan port yang didengarkan aplikasi Express Anda di app.js
+# Biasanya 3000, 5000, atau 8000. Saya asumsikan 5000 untuk contoh ini.
+# Anda mungkin perlu mengaturnya melalui variabel lingkungan di docker-compose.yml
 EXPOSE 5000
 
-# Jalankan perintah start (sesuaikan script di package.json)
-CMD ["npm", "run", "dev"]
+# Command untuk menjalankan aplikasi menggunakan script "dev" dari package.json
+CMD [ "npm", "run", "dev" ]

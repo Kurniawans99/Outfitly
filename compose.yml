@@ -1,0 +1,65 @@
+services:
+  # Layanan Backend (Node.js/Express)
+  backend:
+    build:
+      context: ./backend # Path ke Dockerfile backend
+      dockerfile: dockerfile
+    ports:
+      - "5000:5000" # Map port 5000 di host ke port 5000 di container
+    volumes:
+      - ./backend:/usr/src/app # Sinkronisasi kode lokal dengan container untuk live reload
+      - /usr/src/app/node_modules # Hindari menimpa node_modules di container dengan yang lokal
+    env_file:
+      -  ./backend/(path) #contoh path file .env(./backend/.env.development.local)
+    # Jika tidak menggunakan file .env, bisa langsung mendefinisikan variabel di bawah
+    environment:
+    #default environment variables, bisa diubah sesuai kebutuhan
+      # NODE_ENV: 
+      # PORT:  
+      # SERVER_URL: 
+      # MONGO_URI: 
+      # JWT_SECRET: 
+      # JWT_EXPIRY : 
+    depends_on:
+      - mongo # Backend akan menunggu mongo siap sebelum dimulai
+    networks:
+      - outfitly-network
+
+  # Layanan Frontend (React/Vite)
+  frontend:
+    build:
+      context: ./frontend # Path ke Dockerfile frontend
+      dockerfile: dockerfile
+    ports:
+      - "5173:5173" # Map port 5173 di host (Vite default) ke port 5173 di container
+    volumes:
+      - ./frontend:/usr/src/app # Sinkronisasi kode lokal dengan container untuk live reload (HMR)
+      - /usr/src/app/node_modules # Hindari menimpa node_modules di container
+    environment:
+      NODE_ENV: development
+      # Variabel ini akan digunakan oleh Vite untuk proxy atau base URL API
+      # 'backend' adalah nama layanan backend, dan 5000 adalah port internalnya di jaringan Docker
+      VITE_API_BASE_URL: http://backend:5000
+    depends_on:
+      - backend # Frontend mungkin perlu backend siap (opsional, tergantung setup)
+    networks:
+      - outfitly-network
+
+  # Layanan Database MongoDB
+  mongo:
+    image: mongo:latest # Gunakan image MongoDB resmi
+    ports:
+      - "27017:27017" # Map port MongoDB default
+    volumes:
+      - mongo-data:/data/db # Persistensi data MongoDB
+    networks:
+      - outfitly-network
+
+# Mendefinisikan volume untuk persistensi data MongoDB
+volumes:
+  mongo-data:
+
+# Mendefinisikan jaringan kustom
+networks:
+  outfitly-network:
+    driver: bridge
