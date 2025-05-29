@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, User, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Eye, EyeOff, User, Lock, AlertCircle } from "lucide-react";
 
 const changeBackgroundColor = (
   e: React.MouseEvent<HTMLElement>,
@@ -17,18 +18,56 @@ const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Tambahkan logika autentikasi di sini
-    console.log("Email:", email);
-    console.log("Password:", password);
-    // navigate('/dashboard');
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        import.meta.env.VITE_API_BASE_URL + "/api/auth/sign-in",
+        {
+          email: email,
+          password: password,
+        }
+      );
+
+      setIsLoading(false); // Set loading ke false setelah request selesai
+      console.log("Login berhasil:", response.data);
+
+      //Simpan token
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      navigate("/dashboard");
+    } catch (err: any) {
+      setIsLoading(false); // Set loading ke false jika ada error
+      console.error("Error saat login:", err);
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data.error || "Incorrect email or password.");
+      } else if (err.request) {
+        // Request dibuat tapi tidak ada respons (masalah jaringan)
+        setError(
+          "Unable to connect to server. Check your internet connection."
+        );
+      } else {
+        // Error lainnya
+        setError("An unknown error occurred. Please try again.");
+      }
+    }
   };
 
   const handleGoogleLogin = () => {
     // TODO: Tambahkan logika login Google di sini
+    // Contoh: window.location.href = 'http://localhost:5500/api/auth/google';
     console.log("Login with Google");
+    setError("Fitur login dengan Google belum diimplementasikan.");
   };
 
   return (
@@ -39,7 +78,6 @@ const SignIn: React.FC = () => {
           "linear-gradient(135deg, #2F4156 0%, #567C8D 50%, #C8D9E6 100%)",
       }}
     >
-      {/* Background decorative elements */}
       <div
         className="absolute top-16 left-16 w-40 h-40 rounded-full opacity-10 blur-2xl"
         style={{ backgroundColor: "#567C8D" }}
@@ -73,8 +111,27 @@ const SignIn: React.FC = () => {
           </p>
         </div>
 
+        {/* === Area Pesan Error === */}
+        {error && (
+          <div
+            className="mb-4 p-3 rounded-md flex items-center"
+            style={{
+              backgroundColor: "rgba(234, 67, 53, 0.2)",
+              border: "1px solid rgba(234, 67, 53, 0.5)",
+            }}
+          >
+            <AlertCircle
+              className="w-5 h-5 mr-2"
+              style={{ color: "#EA4335" }}
+            />
+            <span className="text-sm" style={{ color: "#F5EFEB" }}>
+              {error}
+            </span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Input */}
+          {/* Email Input (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <User className="w-5 h-5" style={{ color: "#C8D9E6" }} />
@@ -93,10 +150,11 @@ const SignIn: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading} // Disable input saat loading
             />
           </div>
 
-          {/* Password Input */}
+          {/* Password Input (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Lock className="w-5 h-5" style={{ color: "#C8D9E6" }} />
@@ -115,11 +173,13 @@ const SignIn: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading} // Disable input saat loading
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute top-3 right-3 hover:opacity-80 transition-opacity"
+              disabled={isLoading}
             >
               {showPassword ? (
                 <Eye className="w-5 h-5" style={{ color: "#C8D9E6" }} />
@@ -132,19 +192,28 @@ const SignIn: React.FC = () => {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105"
+            className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex justify-center items-center"
             style={{
-              backgroundColor: "#F5EFEB",
+              backgroundColor: isLoading ? "#C8D9E6" : "#F5EFEB", // Ubah warna saat loading
               color: "#2F4156",
               boxShadow: "0 4px 12px rgba(245, 239, 235, 0.2)",
             }}
-            onMouseEnter={(e) => changeBackgroundColor(e, "#FFFFFF")}
-            onMouseLeave={(e) => changeBackgroundColor(e, "#F5EFEB")}
+            onMouseEnter={(e) =>
+              !isLoading && changeBackgroundColor(e, "#FFFFFF")
+            }
+            onMouseLeave={(e) =>
+              !isLoading && changeBackgroundColor(e, "#F5EFEB")
+            }
+            disabled={isLoading} // Disable tombol saat loading
           >
-            LOG IN
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+            ) : (
+              "LOG IN"
+            )}
           </button>
 
-          {/* Divider */}
+          {/* Divider (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div
@@ -165,22 +234,26 @@ const SignIn: React.FC = () => {
             </div>
           </div>
 
-          {/* Google Login */}
+          {/* Google Login (Tombol didisable saat loading) */}
           <button
             type="button"
             onClick={handleGoogleLogin}
             className="w-full border font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
             style={{
-              backgroundColor: "rgba(86, 124, 141, 0.3)",
+              backgroundColor: isLoading
+                ? "rgba(86, 124, 141, 0.1)"
+                : "rgba(86, 124, 141, 0.3)",
               borderColor: "rgba(200, 217, 230, 0.3)",
               color: "#F5EFEB",
+              cursor: isLoading ? "not-allowed" : "pointer",
             }}
             onMouseEnter={(e) =>
-              changeBackgroundColor(e, "rgba(86, 124, 141, 0.5)")
+              !isLoading && changeBackgroundColor(e, "rgba(86, 124, 141, 0.5)")
             }
             onMouseLeave={(e) =>
-              changeBackgroundColor(e, "rgba(86, 124, 141, 0.3)")
+              !isLoading && changeBackgroundColor(e, "rgba(86, 124, 141, 0.3)")
             }
+            disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -203,7 +276,7 @@ const SignIn: React.FC = () => {
             <span>Login dengan Google</span>
           </button>
 
-          {/* Forgot Password */}
+          {/* Forgot Password (tetap sama) */}
           <div className="text-center">
             <Link
               to="/forgot-password"
@@ -216,7 +289,7 @@ const SignIn: React.FC = () => {
             </Link>
           </div>
 
-          {/* Sign Up */}
+          {/* Sign Up (tetap sama) */}
           <p className="text-sm text-center mt-8" style={{ color: "#C8D9E6" }}>
             Belum punya akun?{" "}
             <Link
