@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
+import User from "../models/users/User.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET, JWT_EXPIRY } from "../config/env.js";
@@ -7,37 +7,31 @@ import { JWT_SECRET, JWT_EXPIRY } from "../config/env.js";
 export const signUp = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, username } = req.body;
 
-    // Validasi panjang password manual
-    if (password.length < 6) {
-      const error = new Error("Password must be at least 6 characters");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    // Check if user exists
-    const existingUser = await User.findOne({ email });
+    // Check if user exists (bisa juga menggunakan static method jika ada)
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    }).session(session);
     if (existingUser) {
-      const error = new Error("User already exists");
+      const error = new Error(
+        "User with this email or username already exists"
+      );
       error.statusCode = 409;
       throw error;
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Biarkan Mongoose melakukan validasi lainnya
-    const newUsers = await User.create(
-      [{ name, email, password: hashedPassword }],
-      { session }
-    );
+    const newUserInstance = new User({
+      name,
+      email,
+      password,
+      username /* field lain */,
+    });
+    const newUsers = await newUserInstance.save({ session });
 
     const token = jwt.sign(
-      { userId: newUsers[0]._id, email: newUsers[0].email },
+      { userId: newUsers._id, email: newUsers.email },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRY }
     );
@@ -45,9 +39,7 @@ export const signUp = async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
 
-    // Hapus password dari response
-    const userResponse = { ...newUsers[0].toObject() };
-    delete userResponse.password;
+    const userResponse = { ...newUsers.toObject() };
 
     return res.status(201).json({
       success: true,
@@ -58,6 +50,10 @@ export const signUp = async (req, res, next) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    // Pastikan error yang dilempar oleh validasi Mongoose juga ditangani dengan baik
+    if (error.name === "ValidationError") {
+      error.statusCode = 400; // atau 422
+    }
     next(error);
   }
 };
@@ -66,20 +62,24 @@ export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      const error = new Error("Email Is not found");
-      error.statusCode = 404;
+      const error = new Error("Email not found");
+      error.statusCode = 401;
       throw error;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Gunakan method instance comparePassword
+    const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
+      // await user.incLoginAttempts(); // Panggil jika ingin implementasi lock akun
       const error = new Error("Invalid password");
       error.statusCode = 401;
       throw error;
     }
+
+    // await user.resetLoginAttempts(); // Reset jika login berhasil & ada implementasi lock
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -87,11 +87,15 @@ export const signIn = async (req, res, next) => {
       { expiresIn: JWT_EXPIRY }
     );
 
+    // Kirim user.displayName atau user.toObject() tanpa password
+    const userResponse = user.toObject();
+    delete userResponse.password; // Pastikan password tidak terkirim
+
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
       token,
-      user,
+      user: userResponse,
     });
   } catch (error) {
     next(error);

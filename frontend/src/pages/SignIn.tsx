@@ -30,7 +30,7 @@ const SignIn: React.FC = () => {
 
     try {
       const response = await axios.post(
-        import.meta.env.VITE_API_BASE_URL + "/api/auth/sign-in",
+        import.meta.env.VITE_API_BASE_URL + "/auth/sign-in",
         {
           email: email,
           password: password,

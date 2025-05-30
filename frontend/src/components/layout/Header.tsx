@@ -39,25 +39,18 @@ export function Header({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
-  // --- Handler untuk Navigasi ke Halaman Profil ---
   const handleProfileNavigation = () => {
-    console.log("DropdownMenuItem: Profil diklik");
-    // TODO: Ganti dengan logika navigasi atau aksi profil Anda
-    navigate("/dashboard/profile"); // Asumsi rute profil adalah /dashboard/profile
+    navigate("/profile");
   };
 
-  // --- Handler untuk Navigasi ke Halaman Pengaturan ---
   const handleSettingsNavigation = () => {
-    // TODO: Ganti dengan logika navigasi atau aksi pengaturan Anda
-    navigate("/dashboard/settings"); // Asumsi rute pengaturan adalah /dashboard/settings
+    navigate("/dashboard/settings");
   };
 
-  // --- Handler untuk Memulai Proses Logout (Menampilkan Dialog) ---
   const handleLogoutInitiate = () => {
     setShowLogoutConfirm(true);
   };
 
-  // --- Fungsi untuk Melakukan Logout Aktual ---
   const performActualLogout = () => {
     localStorage.removeItem("authToken");
 
@@ -65,10 +58,8 @@ export function Header({
       delete axios.defaults.headers.common["Authorization"];
     }
 
-    // 3. Arahkan pengguna ke halaman login
     navigate("/signin");
 
-    // 4. Tutup dialog
     setShowLogoutConfirm(false);
   };
 
@@ -131,13 +122,6 @@ export function Header({
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Pengaturan</span>
               </DropdownMenuItem>
-
-              {/* Tambahkan DropdownMenuItem lain di sini jika perlu */}
-              {/* Contoh:
-              <DropdownMenuItem onSelect={() => console.log("Bantuan diklik")}>
-                Bantuan
-              </DropdownMenuItem>
-              */}
 
               <DropdownMenuSeparator />
 

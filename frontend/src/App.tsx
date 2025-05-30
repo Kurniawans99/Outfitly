@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PathError from "./pages/PathError";
 import LandingPage from "./pages/LandingPage";
+import UserProfile from "./pages/UserProfile";
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
@@ -89,8 +90,7 @@ function App() {
             />
             {/* Tambahkan rute terlindungi lainnya di dalam sini jika perlu */}
           </Route>
-          {/* Anda bisa menambahkan rute terlindungi level atas lainnya di sini */}
-          {/* contoh: <Route path="/profile" element={<UserProfilePage />} /> */}
+          <Route path="/profile" element={<UserProfile />} />
         </Route>
 
         {/* Rute 404 (jika path sama sekali tidak cocok) */}

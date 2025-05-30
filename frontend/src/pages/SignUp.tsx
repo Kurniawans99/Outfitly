@@ -54,7 +54,7 @@ const SignUp: React.FC = () => {
 
     try {
       const response = await axios.post(
-        import.meta.env.VITE_API_BASE_URL + "/api/auth/sign-up",
+        import.meta.env.VITE_API_BASE_URL + "/auth/sign-up",
         {
           name: fullName,
           email: email,
@@ -100,10 +100,6 @@ const SignUp: React.FC = () => {
   };
 
   const handleGoogleSignUp = () => {
-    // TODO: Tambahkan logika sign up Google di sini
-    // Mirip dengan login Google, arahkan ke endpoint backend
-    // Contoh: window.location.href = 'http://localhost:5500/api/auth/google/signup'; (jika ada endpoint terpisah)
-    // atau window.location.href = 'http://localhost:5500/api/auth/google'; (jika endpointnya sama)
     console.log("Sign up with Google");
     setError("The list with Google feature has not been implemented yet.");
   };
