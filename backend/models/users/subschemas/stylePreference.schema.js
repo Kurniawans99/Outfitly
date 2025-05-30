@@ -46,7 +46,7 @@ const stylePreferencesSchema = new mongoose.Schema(
         type: String,
         validate: {
           validator: function (v) {
-            return !v || /^\d{2}(\.\d)?$/.test(v); // Format: 36, 36.5, 42, etc
+            return !v || /^\d{2}(\.\d)?$/.test(v);
           },
           message: "Invalid shoe size format",
         },

@@ -1,65 +1,47 @@
 const errorHandler = (err, req, res, next) => {
-  let error = { ...err };
-  error.message = err.message;
-
-  // Mongoose validation error
-  if (err.name === "ValidationError") {
-    const message = Object.values(err.errors).map((val) => val.message);
-    error = new Error(message.join(", "));
-    return res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+  // Log error untuk debugging (terutama di lingkungan pengembangan)
+  if (process.env.NODE_ENV === "development") {
+    console.error("--- ERROR LOG START ---");
+    console.error("Name:", err.name);
+    console.error("Code:", err.code);
+    console.error("Message:", err.message);
+    console.error("--- ERROR LOG END ---");
   }
 
-  // Mongoose duplicate key error
-  if (err.code === 11000) {
-    const message = "Duplicate subscription detected";
-    error = new Error(message);
-    return res.status(400).json({
-      success: false,
-      error: error.message,
-    });
-  }
+  let statusCode = err.statusCode || 500;
+  let responseMessage = err.message || "Terjadi kesalahan pada server.";
 
-  // Mongoose bad ObjectId
+  // Mongoose Bad ObjectId (CastError)
+  // Seringkali berarti sumber daya tidak ditemukan karena format ID tidak valid.
   if (err.name === "CastError") {
-    const message = `Invalid ${err.path}: ${err.value}`;
-    error = new Error(message);
-    return res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+    statusCode = 404;
+    responseMessage = `Sumber daya tidak ditemukan. ID '${err.value}' untuk field '${err.path}' tidak valid.`;
   }
-
-  // Handle enum validation errors
-  if (err.message.includes("is not a valid enum value")) {
-    const message = `Invalid value provided for ${err.path}`;
-    error = new Error(message);
-    return res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+  // Mongoose Duplicate Key Error (kode error 11000)
+  else if (err.code === 11000) {
+    statusCode = 400;
+    const field = Object.keys(err.keyValue)[0];
+    const value = err.keyValue[field];
+    responseMessage = `Nilai '${value}' untuk field '${field}' sudah ada. Silakan gunakan nilai lain.`;
   }
+  // Mongoose Validation Error
+  else if (err.name === "ValidationError") {
+    statusCode = 400;
+    const errorMessages = Object.values(err.errors).map((el) => el.message);
 
-  // Handle date validation errors
-  if (
-    err.message.includes("Start date must be in the past") ||
-    err.message.includes("Renewal date must be after the start date")
-  ) {
-    return res.status(400).json({
-      success: false,
-      error: err.message,
-    });
+    responseMessage =
+      errorMessages.length > 1 ? errorMessages.join("; ") : errorMessages[0];
+    if (errorMessages.length > 1) {
+      responseMessage = `Validasi gagal: ${errorMessages.join("; ")}`;
+    } else {
+      responseMessage = errorMessages[0] || "Data yang diberikan tidak valid.";
+    }
   }
-
-  // Default error
-  res.status(error.statusCode || 500).json({
+  // Kirim respons JSON
+  res.status(statusCode).json({
     success: false,
-    error: error.message || "Server Error",
+    message: responseMessage,
   });
-
-  next();
 };
 
 export default errorHandler;

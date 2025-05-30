@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import socialMediaSchema from "./subschemas/socialMedia.schema.js";
 import stylePreferencesSchema from "./subschemas/stylePreference.schema.js";
-import privacySettingsSchema from "./subschemas/privacySettings.schema.js";
 import statsSchema from "./subschemas/stats.schema.js";
 
 const userSchema = new mongoose.Schema(
@@ -95,55 +94,7 @@ const userSchema = new mongoose.Schema(
     // Style & Fashion Preferences
     stylePreferences: stylePreferencesSchema,
 
-    // Privacy Settings
-    privacySettings: privacySettingsSchema,
-
-    // Statistics (managed by system)
     stats: statsSchema,
-
-    // Account Status & Verification
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    isPremium: {
-      type: Boolean,
-      default: false,
-    },
-    premiumExpiresAt: {
-      type: Date,
-    },
-
-    // Authentication & Security
-    emailVerified: {
-      type: Boolean,
-      default: false,
-    },
-    emailVerificationToken: {
-      type: String,
-      select: false,
-    },
-    passwordResetToken: {
-      type: String,
-      select: false,
-    },
-    passwordResetExpires: {
-      type: Date,
-      select: false,
-    },
-    loginAttempts: {
-      type: Number,
-      default: 0,
-      select: false,
-    },
-    lockUntil: {
-      type: Date,
-      select: false,
-    },
 
     // Activity Tracking
     lastLoginAt: {
@@ -167,31 +118,6 @@ const userSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-
-    // Blocked users
-    blockedUsers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-
-    // Notification Preferences
-    notificationSettings: {
-      email: {
-        newFollower: { type: Boolean, default: true },
-        outfitLiked: { type: Boolean, default: true },
-        outfitCommented: { type: Boolean, default: true },
-        weeklyDigest: { type: Boolean, default: true },
-        promotions: { type: Boolean, default: false },
-      },
-      push: {
-        newFollower: { type: Boolean, default: true },
-        outfitLiked: { type: Boolean, default: true },
-        outfitCommented: { type: Boolean, default: true },
-        messages: { type: Boolean, default: true },
-      },
-    },
   },
   {
     timestamps: true,

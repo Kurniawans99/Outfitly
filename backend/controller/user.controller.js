@@ -11,39 +11,30 @@ export const getMyProfile = async (req, res, next) => {
         .json({ success: false, message: "User not found" });
     }
 
-    // Pastikan user sudah mengupdate stats sebelum mengirim profil
-    await user.updateStats();
-
     const userProfileData = {
       _id: user._id,
-      name: user.name,
+      name: user.displayName,
       username: user.username,
       email: user.email,
-      phone: user.phone || "", // Pastikan ada nilai default jika null/undefined
+      phone: user.phone || "",
       location: user.location || "",
       bio: user.bio || "",
       avatar: user.avatar, // { url, publicId }
       coverPhoto: user.coverPhoto, // { url, publicId }
-      joinDate: user.createdAt, // Frontend bisa memformat ini
+      joinDate: user.createdAt,
       socialMedia: {
         instagram: user.socialMedia?.instagram || "",
         twitter: user.socialMedia?.twitter || "",
-        tiktok: user.socialMedia?.tiktok || "", // Tambahkan jika ada di frontend
+        tiktok: user.socialMedia?.tiktok || "",
         website: user.socialMedia?.website || "",
       },
-      stylePreferences: user.stylePreferences, // Jika dibutuhkan di profil
-      privacySettings: user.privacySettings, // Jika dibutuhkan
+      stylePreferences: user.stylePreferences,
       stats: {
-        // Pastikan objek stats ada dan memiliki field yang diharapkan
         outfits: user.stats?.totalOutfits || 0,
         followers: user.stats?.followersCount || 0,
         following: user.stats?.followingCount || 0,
-        likes: user.stats?.totalLikes || 0, // totalLikes dari user.stats
-        // views: user.stats?.totalViews || 0, // Jika ada
-        // avgLikesPerOutfit: user.stats?.avgLikesPerOutfit || 0, // Jika ada
+        likes: user.stats?.totalLikes || 0,
       },
-      // Anda juga bisa mengirim virtuals jika toJSON/toObject sudah dikonfigurasi
-      // displayName: user.displayName,
     };
 
     res.status(200).json({
@@ -67,9 +58,8 @@ export const updateUserProfile = async (req, res, next) => {
 
     const {
       name,
-      username,
-      email,
       phone,
+      email,
       location,
       bio,
       // avatar, coverPhoto (upload gambar biasanya endpoint terpisah)
@@ -78,16 +68,6 @@ export const updateUserProfile = async (req, res, next) => {
 
     // Update field dasar
     if (name) user.name = name;
-    if (username && username !== user.username) {
-      // Tambahkan validasi jika username diubah (misal, cek keunikan)
-      const existingUser = await User.findOne({ username });
-      if (existingUser && !existingUser._id.equals(user._id)) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Username already taken" });
-      }
-      user.username = username;
-    }
     if (email && email !== user.email) {
       // Tambahkan validasi jika email diubah (misal, cek keunikan, kirim email verifikasi)
       const existingUser = await User.findOne({ email });
@@ -97,7 +77,6 @@ export const updateUserProfile = async (req, res, next) => {
           .json({ success: false, message: "Email already registered" });
       }
       user.email = email;
-      user.emailVerified = false; // Set email jadi tidak terverifikasi jika diubah
     }
 
     if (phone !== undefined) user.phone = phone;
@@ -106,29 +85,22 @@ export const updateUserProfile = async (req, res, next) => {
 
     // Update social media (pastikan socialMedia ada di skema dan diinisialisasi)
     if (socialMedia) {
-      if (!user.socialMedia) user.socialMedia = {}; // Inisialisasi jika belum ada
+      if (!user.socialMedia) user.socialMedia = {};
       if (socialMedia.instagram !== undefined)
         user.socialMedia.instagram = socialMedia.instagram;
       if (socialMedia.twitter !== undefined)
         user.socialMedia.twitter = socialMedia.twitter;
+      if (socialMedia.tiktok !== undefined)
+        user.socialMedia.twitter = socialMedia.twitter;
       if (socialMedia.website !== undefined)
         user.socialMedia.website = socialMedia.website;
-      // tambahkan field social media lain jika ada
     }
 
-    // Untuk avatar dan coverPhoto, idealnya dihandle oleh endpoint upload terpisah
-    // yang mengembalikan URL gambar, lalu URL itu disimpan di sini.
-    // Jika Anda mengirim URL langsung:
-    // if (req.body.avatarUrl) user.avatar.url = req.body.avatarUrl;
-    // if (req.body.coverPhotoUrl) user.coverPhoto.url = req.body.coverPhotoUrl;
+    const updatedUser = await user.save();
 
-    const updatedUser = await user.save(); // Mongoose akan menjalankan validasi
-
-    // Kembalikan data yang sudah diupdate (mirip dengan getMyProfile)
     const userProfileData = {
       _id: updatedUser._id,
       name: updatedUser.name,
-      username: updatedUser.username,
       email: updatedUser.email,
       phone: updatedUser.phone || "",
       location: updatedUser.location || "",
@@ -139,6 +111,7 @@ export const updateUserProfile = async (req, res, next) => {
       socialMedia: {
         instagram: updatedUser.socialMedia?.instagram || "",
         twitter: updatedUser.socialMedia?.twitter || "",
+        tiktok: updatedUser.socialMedia?.tiktok || "",
         website: updatedUser.socialMedia?.website || "",
       },
       stats: {
@@ -167,39 +140,18 @@ export const getUserProfileByIdOrUsername = async (req, res, next) => {
     const { identifier } = req.params;
     let user;
 
-    // Cek apakah identifier adalah ObjectId yang valid
     if (mongoose.Types.ObjectId.isValid(identifier)) {
       user = await User.findById(identifier);
     }
 
     // Jika tidak ditemukan dengan ID atau bukan ObjectId, coba cari dengan username
     if (!user) {
-      // Gunakan static method jika ada dan sesuai, atau query langsung
-      // user = await User.findByEmailOrUsername(identifier); // Ini mencari email atau username
-      // Jika identifier hanya untuk username:
+      //mencari dengan username
       user = await User.findOne({ username: identifier.toLowerCase() });
     }
 
-    if (!user || !user.isActive) {
-      // Mungkin Anda ingin menyembunyikan user yang tidak aktif
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    // Logika untuk profileVisibility (jika bukan pemilik profil)
-    // const isOwner = req.user && req.user._id.equals(user._id);
-    // if (!isOwner && user.privacySettings.profileVisibility === 'private') {
-    //   return res.status(403).json({ success: false, message: "This profile is private." });
-    // }
-    // if (!isOwner && user.privacySettings.profileVisibility === 'followers-only' && !user.followers.includes(req.user._id)) {
-    //   return res.status(403).json({ success: false, message: "This profile is only visible to followers." });
-    // }
-
-    // Sesuaikan data yang dikembalikan berdasarkan privacy settings
-    const userResponse = user.toObject(); // atau .toJSON() untuk virtuals
+    const userResponse = user.toObject();
     delete userResponse.password;
-    // Hapus/filter field lain berdasarkan privacySettings jika perlu (misal: email, phone)
 
     res.status(200).json({
       success: true,
@@ -215,7 +167,7 @@ export const followUser = async (req, res, next) => {
   session.startTransaction();
   try {
     const userToFollow = await User.findById(req.params.id).session(session);
-    const currentUser = await User.findById(req.user._id).session(session); // req.user dari middleware
+    const currentUser = await User.findById(req.user._id).session(session);
 
     if (!userToFollow || !currentUser) {
       await session.abortTransaction();
@@ -254,8 +206,6 @@ export const followUser = async (req, res, next) => {
 
     await session.commitTransaction();
     session.endSession();
-
-    // Kirim notifikasi (jika ada sistem notifikasi)
 
     res.status(200).json({
       success: true,
@@ -340,8 +290,6 @@ export const getFollowers = async (req, res, next) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-
-    // Pertimbangkan privacy settings di sini
 
     res.status(200).json({
       success: true,

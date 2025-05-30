@@ -10,7 +10,6 @@ export const signUp = async (req, res, next) => {
   try {
     const { name, email, password, username } = req.body;
 
-    // Check if user exists (bisa juga menggunakan static method jika ada)
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     }).session(session);
@@ -23,10 +22,9 @@ export const signUp = async (req, res, next) => {
     }
 
     const newUserInstance = new User({
-      name,
+      username,
       email,
       password,
-      username /* field lain */,
     });
     const newUsers = await newUserInstance.save({ session });
 

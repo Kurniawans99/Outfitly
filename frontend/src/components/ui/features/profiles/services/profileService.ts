@@ -1,7 +1,7 @@
 import { ApiUserData, ApiResponse, UpdateProfilePayload } from "../profile.types";
 
 const getAuthToken = (): string | null => localStorage.getItem("authToken");
-const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api" ;
 
 /**
  * Mengambil data profil pengguna saat ini.
@@ -14,7 +14,7 @@ export const fetchUserProfile = async (): Promise<ApiUserData> => {
     throw new Error("No authentication token found. Please log in.");
   }
 
-  const response = await fetch(`${API_URL}/users/me`, {
+  const response = await fetch(`${API_URL}/user/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export const updateUserProfile = async (payload: UpdateProfilePayload): Promise<
     throw new Error("Authentication token missing.");
   }
 
-  const response = await fetch(`${API_URL}/users/me`, {
+  const response = await fetch(`${API_URL}/user/me`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export const uploadAvatar = async (file: File): Promise<{ url: string; publicId?
   const formData = new FormData();
   formData.append('avatar', file); // Pastikan 'avatar' adalah nama field yang diharapkan backend
 
-  const response = await fetch(`${API_URL}/users/me/avatar`, { // Sesuaikan endpoint jika berbeda
+  const response = await fetch(`${API_URL}/user/me/avatar`, { // Sesuaikan endpoint jika berbeda
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -119,7 +119,7 @@ export const uploadCoverPhoto = async (file: File): Promise<{ url: string; publi
   const formData = new FormData();
   formData.append('coverPhoto', file); // Pastikan 'coverPhoto' adalah nama field yang diharapkan backend
 
-  const response = await fetch(`${API_URL}/users/me/cover-photo`, { // Sesuaikan endpoint jika berbeda
+  const response = await fetch(`${API_URL}/user/me/cover-photo`, { // Sesuaikan endpoint jika berbeda
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

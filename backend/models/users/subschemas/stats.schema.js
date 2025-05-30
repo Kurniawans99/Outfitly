@@ -27,11 +27,6 @@ const statsSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-    avgLikesPerOutfit: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
   },
   { _id: false }
 );
