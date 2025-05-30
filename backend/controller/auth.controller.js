@@ -58,26 +58,37 @@ export const signUp = async (req, res, next) => {
 
 export const signIn = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    // Validasi input dasar
+    if (!identifier || !password) {
+      const error = new Error("Please enter your email/username and password.");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const lowercasedIdentifier = identifier.toLowerCase();
+
+    const user = await User.findOne({
+      $or: [
+        { email: lowercasedIdentifier },
+        { username: lowercasedIdentifier },
+      ],
+    }).select("+password");
+
     if (!user) {
-      const error = new Error("Email not found");
+      const error = new Error("Email or username not found.");
       error.statusCode = 401;
       throw error;
     }
 
-    // Gunakan method instance comparePassword
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
-      // await user.incLoginAttempts(); // Panggil jika ingin implementasi lock akun
-      const error = new Error("Invalid password");
+      const error = new Error("Wrong Password.");
       error.statusCode = 401;
       throw error;
     }
-
-    // await user.resetLoginAttempts(); // Reset jika login berhasil & ada implementasi lock
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -85,13 +96,12 @@ export const signIn = async (req, res, next) => {
       { expiresIn: JWT_EXPIRY }
     );
 
-    // Kirim user.displayName atau user.toObject() tanpa password
     const userResponse = user.toObject();
-    delete userResponse.password; // Pastikan password tidak terkirim
+    delete userResponse.password;
 
     return res.status(200).json({
       success: true,
-      message: "User logged in successfully",
+      message: "Login success.",
       token,
       user: userResponse,
     });

@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema(
     // Basic Authentication Info
     name: {
       type: String,
-      required: [true, "Name is required"],
       trim: true,
       minLength: [2, "Name must be at least 2 characters"],
       maxLength: [50, "Name cannot exceed 50 characters"],

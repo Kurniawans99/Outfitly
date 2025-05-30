@@ -32,7 +32,7 @@ export interface OutfitData {
 export interface ApiUserSocialMedia {
   instagram?: string;
   twitter?: string;
-  tiktok?: string; // Tambahkan jika ada di API Anda
+  tiktok?: string; 
   website?: string;
 }
 
@@ -63,11 +63,11 @@ export interface ApiUserData {
   createdAt: string;
   socialMedia?: ApiUserSocialMedia;
   stats?: ApiUserStats;
-  // stylePreferences?: any; // Definisikan jika digunakan
-  // privacySettings?: any; // Definisikan jika digunakan
+  // stylePreferences?: any; 
+ 
 }
 
-export interface ApiResponse<T = ApiUserData> { // Membuat generic untuk data user
+export interface ApiResponse<T = ApiUserData> { 
   success: boolean;
   user?: T;
   message?: string;
@@ -96,11 +96,11 @@ export interface EditableFieldProps<T extends keyof ProfileDataState> {
   field: T;
   onChange: (field: T, value: string) => void;
   placeholder?: string;
-  multiline?: boolean; // Untuk textarea
-  inputType?: string; // Untuk tipe input seperti 'email', 'tel'
-  icon?: React.ReactNode; // Untuk ikon di sebelah input
-  label?: string; // Untuk label jika diperlukan
-  className?: string; // Untuk styling tambahan
-  viewClassName?: string; // Styling tambahan untuk mode view
-  inputClassName?: string; // Styling tambahan untuk mode input
+  multiline?: boolean; 
+  inputType?: string; 
+  icon?: React.ReactNode; 
+  label?: string; 
+  className?: string; 
+  viewClassName?: string; 
+  inputClassName?: string; 
 }

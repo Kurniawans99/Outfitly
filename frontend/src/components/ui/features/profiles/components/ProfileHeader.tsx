@@ -117,13 +117,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     placeholder="Nama Lengkap"
                     className="text-2xl font-bold text-slate-900 bg-slate-50 border-slate-300 rounded-lg px-3 py-2 w-full md:w-80"
                   />
-                  <Input
-                    type="text"
-                    value={editData.username}
-                    onChange={(e) => onInputChange("username", e.target.value)}
-                    placeholder="Username"
-                    className="text-slate-600 bg-slate-50 border-slate-300 rounded-lg px-3 py-2 w-full md:w-60"
-                  />
                 </div>
               ) : (
                 <div>

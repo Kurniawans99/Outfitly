@@ -23,7 +23,7 @@ const changeTextColor = (e: React.MouseEvent<HTMLElement>, color: string) => {
 };
 
 const SignUp: React.FC = () => {
-  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +32,7 @@ const SignUp: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate(); // Hook untuk navigasi
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ const SignUp: React.FC = () => {
       const response = await axios.post(
         import.meta.env.VITE_API_BASE_URL + "/auth/sign-up",
         {
-          name: fullName,
+          username: username,
           email: email,
           password: password,
         }
@@ -69,7 +69,7 @@ const SignUp: React.FC = () => {
       );
 
       // Kosongkan form setelah berhasil
-      setFullName("");
+      setUsername("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
@@ -84,7 +84,7 @@ const SignUp: React.FC = () => {
       if (axios.isAxiosError(err) && err.response) {
         // Backend mengembalikan pesan error
         setError(
-          err.response.data.error ||
+          err.response.data.message ||
             "Failed to register. Email may already be in use or input is invalid."
         );
       } else if (err.request) {
@@ -200,9 +200,9 @@ const SignUp: React.FC = () => {
                 borderColor: "rgba(200, 217, 230, 0.3)",
                 color: "#F5EFEB",
               }}
-              placeholder="Nama Kamu"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               disabled={isLoading}
             />
@@ -223,7 +223,7 @@ const SignUp: React.FC = () => {
                 borderColor: "rgba(200, 217, 230, 0.3)",
                 color: "#F5EFEB",
               }}
-              placeholder="kamu@contoh.com"
+              placeholder="Email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -246,7 +246,7 @@ const SignUp: React.FC = () => {
                 borderColor: "rgba(200, 217, 230, 0.3)",
                 color: "#F5EFEB",
               }}
-              placeholder="Minimal 8 karakter"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

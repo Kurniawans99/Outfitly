@@ -15,7 +15,7 @@ const changeTextColor = (e: React.MouseEvent<HTMLElement>, color: string) => {
 };
 
 const SignIn: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ const SignIn: React.FC = () => {
       const response = await axios.post(
         import.meta.env.VITE_API_BASE_URL + "/auth/sign-in",
         {
-          email: email,
+          identifier: identifier,
           password: password,
         }
       );
@@ -50,7 +50,7 @@ const SignIn: React.FC = () => {
       setIsLoading(false); // Set loading ke false jika ada error
       console.error("Error saat login:", err);
       if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.error || "Incorrect email or password.");
+        setError(err.response.data.message || "Incorrect email or password.");
       } else if (err.request) {
         // Request dibuat tapi tidak ada respons (masalah jaringan)
         setError(
@@ -64,8 +64,8 @@ const SignIn: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    // TODO: Tambahkan logika login Google di sini
-    // Contoh: window.location.href = 'http://localhost:5500/api/auth/google';
+    // TODO: Tambahkan logika login Google
+
     console.log("Login with Google");
     setError("Fitur login dengan Google belum diimplementasikan.");
   };
@@ -111,7 +111,6 @@ const SignIn: React.FC = () => {
           </p>
         </div>
 
-        {/* === Area Pesan Error === */}
         {error && (
           <div
             className="mb-4 p-3 rounded-md flex items-center"
@@ -131,30 +130,28 @@ const SignIn: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Input (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <User className="w-5 h-5" style={{ color: "#C8D9E6" }} />
             </div>
             <input
-              type="email"
-              name="email"
-              id="email"
+              type="text"
+              name="identifier"
+              id="identifier"
               className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
               style={{
                 backgroundColor: "rgba(86, 124, 141, 0.2)",
                 borderColor: "rgba(200, 217, 230, 0.3)",
                 color: "#F5EFEB",
               }}
-              placeholder="hello@samuelmay.co"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Username atau Email"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
-              disabled={isLoading} // Disable input saat loading
+              disabled={isLoading}
             />
           </div>
 
-          {/* Password Input (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Lock className="w-5 h-5" style={{ color: "#C8D9E6" }} />
@@ -169,11 +166,11 @@ const SignIn: React.FC = () => {
                 borderColor: "rgba(200, 217, 230, 0.3)",
                 color: "#F5EFEB",
               }}
-              placeholder="PASSWORD"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isLoading} // Disable input saat loading
+              disabled={isLoading}
             />
             <button
               type="button"
@@ -189,12 +186,11 @@ const SignIn: React.FC = () => {
             </button>
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
             className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex justify-center items-center"
             style={{
-              backgroundColor: isLoading ? "#C8D9E6" : "#F5EFEB", // Ubah warna saat loading
+              backgroundColor: isLoading ? "#C8D9E6" : "#F5EFEB",
               color: "#2F4156",
               boxShadow: "0 4px 12px rgba(245, 239, 235, 0.2)",
             }}
@@ -204,7 +200,7 @@ const SignIn: React.FC = () => {
             onMouseLeave={(e) =>
               !isLoading && changeBackgroundColor(e, "#F5EFEB")
             }
-            disabled={isLoading} // Disable tombol saat loading
+            disabled={isLoading}
           >
             {isLoading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
@@ -213,7 +209,6 @@ const SignIn: React.FC = () => {
             )}
           </button>
 
-          {/* Divider (tetap sama) */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div
@@ -234,7 +229,6 @@ const SignIn: React.FC = () => {
             </div>
           </div>
 
-          {/* Google Login (Tombol didisable saat loading) */}
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -276,7 +270,6 @@ const SignIn: React.FC = () => {
             <span>Login dengan Google</span>
           </button>
 
-          {/* Forgot Password (tetap sama) */}
           <div className="text-center">
             <Link
               to="/forgot-password"
@@ -289,7 +282,6 @@ const SignIn: React.FC = () => {
             </Link>
           </div>
 
-          {/* Sign Up (tetap sama) */}
           <p className="text-sm text-center mt-8" style={{ color: "#C8D9E6" }}>
             Belum punya akun?{" "}
             <Link

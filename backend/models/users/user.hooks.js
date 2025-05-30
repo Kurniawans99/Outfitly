@@ -25,4 +25,11 @@ export default function applyUserHooks(userSchema) {
     }
     next();
   });
+
+  userSchema.pre("save", function (next) {
+    if (this.isNew && (!this.name || this.name.trim() === "")) {
+      this.name = this.username;
+    }
+    next();
+  });
 }
