@@ -55,8 +55,8 @@ export const useUserProfile = () => {
       location: userData.location || "",
       bio: userData.bio || "",
       joinDate: userData.createdAt
-        ? format(new Date(userData.createdAt), "MMMM yyyy") // format(new Date(userData.createdAt), "MMMM yyyy", { locale: id })
-        : currentProfileData?.joinDate || "N/A", // Pertahankan joinDate jika tidak ada dari API saat update
+        ? format(new Date(userData.createdAt), "MMMM yyyy") 
+        : currentProfileData?.joinDate || "N/A", 
       website: userData.socialMedia?.website || "",
       instagram: userData.socialMedia?.instagram || "",
       twitter: userData.socialMedia?.twitter || "",
@@ -163,11 +163,7 @@ export const useUserProfile = () => {
         setProfileData(prev => ({ ...prev, coverPhotoUrl: newUrl }));
         setEditData(prev => ({ ...prev, coverPhotoUrl: newUrl })); // Update juga di editData
       }
-       // Opsional: Jika ingin langsung menyimpan perubahan URL ke backend setelah upload berhasil
-      // Anda bisa memanggil handleSave() di sini atau mengharuskan user klik "Simpan" secara manual
-      // Untuk saat ini, kita hanya update state lokal dan user harus klik simpan profil utama.
-      // Jika API update avatar/cover mengembalikan user object yang sudah terupdate,
-      // maka panggil mapApiUserDataToProfileData.
+      
     } catch (err: any) {
       console.error(`${type} upload error:`, err);
       setError(`Failed to upload ${type}: ${err.message}`);

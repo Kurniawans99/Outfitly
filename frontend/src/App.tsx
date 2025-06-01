@@ -22,10 +22,13 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useState } from "react";
 
 import { ProtectedRoute, PublicRoute } from "./components/auth/ProtectedRoutes";
+import coba from "./pages/coba";
 
 // Layout Utama untuk Halaman Dashboard (tetap sama)
 function DashboardLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  coba;
 
   return (
     <div className="flex min-h-screen bg-slate-100">

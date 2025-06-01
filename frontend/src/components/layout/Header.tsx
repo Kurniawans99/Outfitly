@@ -105,7 +105,6 @@ export function Header({
               <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
-              {/* Item Menu Profil */}
               <DropdownMenuItem
                 onSelect={handleProfileNavigation}
                 className="cursor-pointer"

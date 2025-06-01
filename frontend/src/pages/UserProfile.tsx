@@ -9,8 +9,10 @@ import { ActivityTab } from "@/components/ui/features/profiles/components/Activi
 import { ProfileSidebar } from "@/components/ui/features/profiles/components/ProfileSidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react"; // Icon untuk Alert
+import { Terminal, ArrowLeft } from "lucide-react"; // Import ArrowLeft icon
 import { ProfileDataState } from "@/components/ui/features/profiles/profile.types";
+import { Link } from "react-router-dom"; // Import Link untuk navigasi
+import { Button } from "@/components/ui/button"; // Import Button jika Anda ingin styling tombol
 
 const UserProfilePage = () => {
   const {
@@ -26,17 +28,15 @@ const UserProfilePage = () => {
     handleEdit,
     handleSave,
     handleCancel,
-    handleInputChange, // Untuk nama & username di header, dan field lain di AboutTab
+    handleInputChange,
     handleAvatarUpload,
     handleCoverPhotoUpload,
   } = useUserProfile();
 
   if (isLoading && !profileData.name) {
-    // Tampilkan skeleton hanya jika data awal belum ada
     return <ProfileLoadingSkeleton />;
   }
 
-  // Pisahkan handler input untuk ProfileHeader dan AboutTab agar lebih jelas
   const handleHeaderInputChange = (
     field: "name" | "username",
     value: string
@@ -57,9 +57,22 @@ const UserProfilePage = () => {
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          {" "}
+          <Link to="/dashboard">
+            <Button
+              variant="outline"
+              className="flex items-center group bg-brand-teal hover:bg-brand-teal/90 hover:text-white text-white"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2 transition-transform duration-200 ease-in-out group-hover:-translate-x-1" />
+              Kembali ke Dashboard
+            </Button>
+          </Link>
+        </div>
+
         {error && (
           <Alert variant="destructive" className="mb-4">
-            <Terminal className="h-4 w-4" /> {/* Atau icon lain yang sesuai */}
+            <Terminal className="h-4 w-4" />
             <AlertTitle>Error!</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>

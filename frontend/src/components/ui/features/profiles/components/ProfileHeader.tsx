@@ -40,11 +40,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       {/* Cover Photo */}
       <div className="h-48 bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500 relative">
         <img
-          src={editData.coverPhotoUrl} // Tampilkan editData.coverPhotoUrl agar perubahan terlihat langsung
+          src={editData.coverPhotoUrl}
           alt="Cover"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        {/* Kamu sudah menghapus div overlay hitam, bagus! */}
         {isEditing && (
           <Label
             htmlFor="coverPhotoInput"
@@ -70,13 +70,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       {/* Profile Info */}
       <div className="px-6 pb-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 relative">
+        {/* PERUBAHAN DI SINI: Sesuaikan nilai -mt- */}
+        {/* Coba -mt-8 dulu, lalu -mt-4 atau bahkan tanpa margin negatif jika ingin lebih banyak ruang */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-8 relative">
           <div className="flex flex-col md:flex-row md:items-end gap-4">
             {/* Avatar */}
             <div className="relative">
               <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
                 <AvatarImage src={editData.avatarUrl} alt={profileData.name} />{" "}
-                {/* Tampilkan editData.avatarUrl */}
                 <AvatarFallback className="text-4xl">
                   {profileData.name
                     ? profileData.name.substring(0, 2).toUpperCase()
@@ -140,18 +141,27 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <Button
                   variant="outline"
                   onClick={onCancel}
+                  className="bg-red-600 hover:bg-red-600/80 hover:text-white text-white"
                   disabled={isUploading !== false}
                 >
                   <X className="w-4 h-4 mr-2" />
                   Batal
                 </Button>
-                <Button onClick={onSave} disabled={isUploading !== false}>
+                <Button
+                  onClick={onSave}
+                  className="bg-brand-teal hover:bg-brand-teal/90 hover:text-white text-white"
+                  disabled={isUploading !== false}
+                >
                   <Save className="w-4 h-4 mr-2" />
                   Simpan
                 </Button>
               </>
             ) : (
-              <Button variant="outline" onClick={onEdit}>
+              <Button
+                variant="outline"
+                onClick={onEdit}
+                className="bg-brand-teal hover:bg-brand-teal/90 hover:text-white text-white"
+              >
                 <Edit3 className="w-4 h-4 mr-2" />
                 Edit Profile
               </Button>

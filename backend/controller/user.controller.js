@@ -1,6 +1,6 @@
 import User from "../models/users/User.model.js";
 import mongoose from "mongoose";
-
+import cloudinary from "../config/cloudinary.js";
 export const getMyProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
@@ -19,8 +19,8 @@ export const getMyProfile = async (req, res, next) => {
       phone: user.phone || "",
       location: user.location || "",
       bio: user.bio || "",
-      avatar: user.avatar, // { url, publicId }
-      coverPhoto: user.coverPhoto, // { url, publicId }
+      avatar: user.avatar,
+      coverPhoto: user.coverPhoto,
       joinDate: user.createdAt,
       socialMedia: {
         instagram: user.socialMedia?.instagram || "",
@@ -56,15 +56,7 @@ export const updateUserProfile = async (req, res, next) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const {
-      name,
-      phone,
-      email,
-      location,
-      bio,
-      // avatar, coverPhoto (upload gambar biasanya endpoint terpisah)
-      socialMedia,
-    } = req.body;
+    const { name, phone, email, location, bio, socialMedia } = req.body;
 
     // Update field dasar
     if (name) user.name = name;
@@ -100,6 +92,7 @@ export const updateUserProfile = async (req, res, next) => {
 
     const userProfileData = {
       _id: updatedUser._id,
+      username: updatedUser.username,
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone || "",
@@ -158,6 +151,105 @@ export const getUserProfileByIdOrUsername = async (req, res, next) => {
       user: userResponse,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAvatar = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No avatar file uploaded." });
+    }
+
+    // Unggah gambar ke Cloudinary
+    const result = await cloudinary.uploader.upload(
+      `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+      {
+        folder: "avatars",
+      }
+    );
+
+    if (user.avatar && user.avatar.publicId) {
+      await cloudinary.uploader.destroy(user.avatar.publicId);
+    }
+
+    user.avatar = {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Avatar uploaded successfully!",
+      avatar: user.avatar,
+      user,
+    });
+  } catch (error) {
+    console.error("Error uploading avatar:", error);
+    if (error.message.includes("fileFilter")) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    next(error);
+  }
+};
+
+export const updateCoverPhoto = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No cover photo file uploaded." });
+    }
+
+    const result = await cloudinary.uploader.upload(
+      `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+      {
+        folder: "cover_photos",
+      }
+    );
+
+    if (user.coverPhoto && user.coverPhoto.publicId) {
+      await cloudinary.uploader.destroy(user.coverPhoto.publicId);
+    }
+
+    user.coverPhoto = {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Cover photo uploaded successfully!",
+      coverPhoto: user.coverPhoto,
+      user,
+    });
+  } catch (error) {
+    console.error("Error uploading cover photo:", error);
+    if (error.message.includes("fileFilter")) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
     next(error);
   }
 };
