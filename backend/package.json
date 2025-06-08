@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@google/genai": "^1.4.0",
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.1",
     "cors": "^2.8.5",

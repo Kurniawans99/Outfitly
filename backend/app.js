@@ -5,6 +5,7 @@ import connectDB from "./databases/mongoDB.js";
 import errorHandler from "./middlewares/error.middleware.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
+import geminiRouter from "./routes/gemini.routes.js";
 
 const app = express();
 const port = PORT || 5000;
@@ -17,6 +18,7 @@ app.use(cors());
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/ask", geminiRouter);
 
 app.use(errorHandler);
 

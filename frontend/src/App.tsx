@@ -11,6 +11,7 @@ import SignUp from "./pages/SignUp";
 import PathError from "./pages/PathError";
 import LandingPage from "./pages/LandingPage";
 import UserProfile from "./pages/UserProfile";
+import AskAI from "./pages/AskAI"; // Import komponen AI baru
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
@@ -43,8 +44,10 @@ function DashboardLayout() {
       </Sheet>
       <div className="flex-1 flex flex-col">
         <Header setMobileSidebarOpen={setMobileSidebarOpen} />
-        <main className="flex-1 overflow-y-auto">
-          <Outlet />
+        <main className="flex-grow md:ml-64">
+          <div className="p-4 md:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
       <Toaster />
@@ -87,6 +90,7 @@ function App() {
               path="community"
               element={<PlaceholderPage title="Komunitas" />}
             />
+            <Route path="ai" element={<AskAI />} />
             <Route
               path="settings"
               element={<PlaceholderPage title="Pengaturan Akun" />}
