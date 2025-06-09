@@ -84,15 +84,6 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <div className="mt-auto mb-4 pt-4">
-        <Link to="/dashboard/wardrobe/add">
-          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-            <PackagePlus className="mr-2 h-4 w-4" />
-            Tambah Pakaian
-          </Button>
-        </Link>
-      </div>
-
       <div>
         <Link to={settingsItem.href}>
           <Button

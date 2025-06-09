@@ -1,5 +1,5 @@
 // src/components/features/profile/UserProfilePage.tsx
-import { useUserProfile } from "@/components/ui/features/profiles/hooks/useUserProfile";
+import { useUserProfile } from "@/services/profile/useUserProfile";
 import { ProfileLoadingSkeleton } from "@/components/ui/features/profiles/components/LoadingSkeleton";
 import { ProfileHeader } from "@/components/ui/features/profiles/components/ProfileHeader";
 import { ProfileStats } from "@/components/ui/features/profiles/components/ProfileStats";
@@ -8,11 +8,13 @@ import { OutfitsTab } from "@/components/ui/features/profiles/components/Outfits
 import { ActivityTab } from "@/components/ui/features/profiles/components/ActivityTab";
 import { ProfileSidebar } from "@/components/ui/features/profiles/components/ProfileSidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, ArrowLeft } from "lucide-react"; // Import ArrowLeft icon
-import { ProfileDataState } from "@/components/ui/features/profiles/profile.types";
-import { Link } from "react-router-dom"; // Import Link untuk navigasi
-import { Button } from "@/components/ui/button"; // Import Button jika Anda ingin styling tombol
+// 1. Hapus impor Alert karena tidak digunakan lagi
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import { Terminal } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { ProfileDataState } from "@/services/profile/profile.types";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const UserProfilePage = () => {
   const {
@@ -22,7 +24,8 @@ const UserProfilePage = () => {
     editData,
     stats,
     isLoading,
-    error,
+    // 2. Hapus 'error' dari destructuring
+    // error,
     isUploading,
     setActiveTab,
     handleEdit,
@@ -37,6 +40,7 @@ const UserProfilePage = () => {
     return <ProfileLoadingSkeleton />;
   }
 
+  // ... (fungsi handle...InputChange tetap sama) ...
   const handleHeaderInputChange = (
     field: "name" | "username",
     value: string
@@ -70,13 +74,14 @@ const UserProfilePage = () => {
           </Link>
         </div>
 
-        {error && (
+        {/* 3. Hapus seluruh blok komponen Alert ini */}
+        {/* {error && (
           <Alert variant="destructive" className="mb-4">
             <Terminal className="h-4 w-4" />
             <AlertTitle>Error!</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
-        )}
+        )} */}
 
         <ProfileHeader
           profileData={profileData}
@@ -93,6 +98,7 @@ const UserProfilePage = () => {
 
         <ProfileStats stats={stats} />
 
+        {/* ... sisa komponen tetap sama ... */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
           <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border border-slate-200 p-1 h-auto">
             <TabsTrigger

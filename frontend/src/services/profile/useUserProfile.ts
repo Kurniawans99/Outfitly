@@ -1,19 +1,22 @@
+// src/services/profile/useUserProfile.ts
+
 import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { format } from "date-fns";
-// import { id } from 'date-fns/locale/id'; // Jika ingin format tanggal bahasa Indonesia
+import { toast } from "sonner"; // 1. Import toast dari sonner
 import {
   ProfileDataState,
   UserStatsState,
   ApiUserData,
   UpdateProfilePayload,
-} from "../profile.types";
+} from "./profile.types";
 import {
   fetchUserProfile,
   updateUserProfile,
   uploadAvatar,
   uploadCoverPhoto,
-} from "../services/profileService";
+} from "./profileService";
 
+// ... (initialProfileData dan initialStats tetap sama) ...
 const initialProfileData: ProfileDataState = {
   name: "",
   username: "",
@@ -25,8 +28,8 @@ const initialProfileData: ProfileDataState = {
   website: "",
   instagram: "",
   twitter: "",
-  avatarUrl: "/api/placeholder/128/128", // Placeholder default
-  coverPhotoUrl: "/api/placeholder/800/200", // Placeholder default
+  avatarUrl: "/api/placeholder/128/128", 
+  coverPhotoUrl: "/api/placeholder/800/200",
 };
 
 const initialStats: UserStatsState = {
@@ -36,6 +39,7 @@ const initialStats: UserStatsState = {
   likes: 0,
 };
 
+
 export const useUserProfile = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("about");
@@ -43,9 +47,11 @@ export const useUserProfile = () => {
   const [editData, setEditData] = useState<ProfileDataState>(initialProfileData);
   const [stats, setStats] = useState<UserStatsState>(initialStats);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState<false | 'avatar' | 'cover'>(false); // Untuk status upload
+  // 2. Hapus state 'error' karena akan digantikan oleh toast
+  // const [error, setError] = useState<string | null>(null); 
+  const [isUploading, setIsUploading] = useState<false | 'avatar' | 'cover'>(false);
 
+  // ... (mapApiUserDataToProfileData tetap sama) ...
   const mapApiUserDataToProfileData = useCallback((userData: ApiUserData, currentProfileData?: ProfileDataState): ProfileDataState => {
     return {
       name: userData.name || "",
@@ -65,14 +71,15 @@ export const useUserProfile = () => {
     };
   }, []);
 
+
   const loadProfile = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
+    // setError(null); // Hapus ini
     try {
       const userData = await fetchUserProfile();
       const formattedProfile = mapApiUserDataToProfileData(userData);
       setProfileData(formattedProfile);
-      setEditData({ ...formattedProfile }); // Inisialisasi editData setelah fetch
+      setEditData({ ...formattedProfile });
       setStats({
         outfits: userData.stats?.totalOutfits || 0,
         followers: userData.stats?.followersCount || 0,
@@ -81,7 +88,10 @@ export const useUserProfile = () => {
       });
     } catch (err: any) {
       console.error("Fetch profile error in hook:", err);
-      setError(err.message);
+      // 3. Tampilkan toast error jika gagal memuat profil
+      toast.error("Gagal memuat profil.", {
+        description: err.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,14 +103,14 @@ export const useUserProfile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditData({ ...profileData }); // Selalu reset editData dari profileData saat mulai edit
+    setEditData({ ...profileData });
   };
 
   const handleSave = async () => {
-    setError(null);
-    setIsLoading(true); // Menunjukkan proses loading saat menyimpan
+    setIsLoading(true);
 
     const payload: UpdateProfilePayload = {
+      // ... payload
       name: editData.name,
       username: editData.username,
       email: editData.email,
@@ -118,20 +128,23 @@ export const useUserProfile = () => {
       const updatedUserData = await updateUserProfile(payload);
       const updatedProfile = mapApiUserDataToProfileData(updatedUserData, profileData);
       setProfileData(updatedProfile);
-      setEditData({ ...updatedProfile }); // Update editData juga setelah save berhasil
+      setEditData({ ...updatedProfile });
       setIsEditing(false);
+      // 4. Tampilkan toast sukses setelah berhasil menyimpan
+      toast.success("Profil berhasil diperbarui!");
     } catch (err: any) {
       console.error("Update profile error in hook:", err);
-      setError(err.message);
-    } finally {
+      // 5. Tampilkan toast error jika gagal menyimpan
+      toast.error("Gagal memperbarui profil." + ";" + ` ${err.message}`);
+      
+      } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditData({ ...profileData }); // Kembalikan editData ke profileData saat ini
-    setError(null);
+    setEditData({ ...profileData });
   };
 
   const handleInputChange = (
@@ -149,30 +162,37 @@ export const useUserProfile = () => {
     if (!file) return;
 
     setIsUploading(type);
-    setError(null);
+    const toastId = toast.loading(`Mengunggah ${type}...`); // Tampilkan toast loading
+
     try {
       let newUrl = '';
       if (type === 'avatar') {
         const result = await uploadAvatar(file);
         newUrl = result.url;
         setProfileData(prev => ({ ...prev, avatarUrl: newUrl }));
-        setEditData(prev => ({ ...prev, avatarUrl: newUrl })); // Update juga di editData
+        setEditData(prev => ({ ...prev, avatarUrl: newUrl }));
       } else if (type === 'cover') {
         const result = await uploadCoverPhoto(file);
         newUrl = result.url;
         setProfileData(prev => ({ ...prev, coverPhotoUrl: newUrl }));
-        setEditData(prev => ({ ...prev, coverPhotoUrl: newUrl })); // Update juga di editData
+        setEditData(prev => ({ ...prev, coverPhotoUrl: newUrl }));
       }
+      // 6. Tampilkan toast sukses setelah berhasil upload
+      toast.success(`${type === 'avatar' ? 'Avatar' : 'Foto sampul'} berhasil diunggah!`, { id: toastId });
       
     } catch (err: any) {
       console.error(`${type} upload error:`, err);
-      setError(`Failed to upload ${type}: ${err.message}`);
+      // 7. Tampilkan toast error jika gagal upload
+      toast.error(`Gagal mengunggah ${type}.`, {
+        id: toastId,
+        description: err.message,
+      });
     } finally {
       setIsUploading(false);
-      event.target.value = ""; // Reset input file
+      event.target.value = "";
     }
   };
-
+  
   const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>) => {
     handleFileUpload(event, 'avatar');
   };
@@ -181,7 +201,6 @@ export const useUserProfile = () => {
     handleFileUpload(event, 'cover');
   };
 
-
   return {
     isEditing,
     activeTab,
@@ -189,7 +208,6 @@ export const useUserProfile = () => {
     editData,
     stats,
     isLoading,
-    error,
     isUploading,
     setActiveTab,
     handleEdit,
@@ -198,6 +216,6 @@ export const useUserProfile = () => {
     handleInputChange,
     handleAvatarUpload,
     handleCoverPhotoUpload,
-    reloadProfile: loadProfile, // Eksport fungsi untuk reload jika diperlukan dari luar
+    reloadProfile: loadProfile,
   };
 };

@@ -1,6 +1,6 @@
 // src/components/features/profile/components/OutfitsTab.tsx
 import React from "react";
-import { OutfitData } from "../profile.types"; // Asumsi OutfitData ada di profile.types.ts
+import { OutfitData } from "@/services/profile/profile.types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";

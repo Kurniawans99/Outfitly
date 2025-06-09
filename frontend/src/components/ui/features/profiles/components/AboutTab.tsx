@@ -1,6 +1,6 @@
 // src/components/features/profile/components/AboutTab.tsx
 import React, { ChangeEvent } from "react";
-import { ProfileDataState } from "../profile.types";
+import { ProfileDataState } from "@/services/profile/profile.types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

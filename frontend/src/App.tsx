@@ -23,13 +23,11 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useState } from "react";
 
 import { ProtectedRoute, PublicRoute } from "./components/auth/ProtectedRoutes";
-import coba from "./pages/coba";
+import WardrobePage from "./pages/Wardrobe";
 
 // Layout Utama untuk Halaman Dashboard (tetap sama)
 function DashboardLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  coba;
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -50,60 +48,59 @@ function DashboardLayout() {
           </div>
         </main>
       </div>
-      <Toaster />
     </div>
   );
 }
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Rute Publik (hanya tersedia jika user tidak terautentikasi) */}
-        <Route element={<PublicRoute />}>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-        </Route>
-
-        {/* Rute Landing Page (Publik) */}
-        <Route path="/" element={<LandingPage />} />
-
-        {/* Rute Terlindungi */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            {/* Halaman default saat mengunjungi /dashboard */}
-            <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<DashboardOverviewPage />} />
-            <Route
-              path="wardrobe"
-              element={<PlaceholderPage title="Manajemen Pakaian" />}
-            />
-            <Route
-              path="inspiration"
-              element={<PlaceholderPage title="Inspirasi Outfit" />}
-            />
-            <Route
-              path="planner"
-              element={<PlaceholderPage title="Outfit Planner" />}
-            />
-            <Route
-              path="community"
-              element={<PlaceholderPage title="Komunitas" />}
-            />
-            <Route path="ai" element={<AskAI />} />
-            <Route
-              path="settings"
-              element={<PlaceholderPage title="Pengaturan Akun" />}
-            />
-            {/* Tambahkan rute terlindungi lainnya di dalam sini jika perlu */}
+    <>
+      <Router>
+        <Routes>
+          {/* Rute Publik (hanya tersedia jika user tidak terautentikasi) */}
+          <Route element={<PublicRoute />}>
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
           </Route>
-          <Route path="/profile" element={<UserProfile />} />
-        </Route>
 
-        {/* Rute 404 (jika path sama sekali tidak cocok) */}
-        <Route path="*" element={<PathError />} />
-      </Routes>
-    </Router>
+          {/* Rute Landing Page (Publik) */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* Rute Terlindungi */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              {/* Halaman default saat mengunjungi /dashboard */}
+              <Route index element={<Navigate to="overview" replace />} />
+              <Route path="overview" element={<DashboardOverviewPage />} />
+              <Route path="wardrobe" element={<WardrobePage />} />
+              <Route
+                path="inspiration"
+                element={<PlaceholderPage title="Inspirasi Outfit" />}
+              />
+              <Route
+                path="planner"
+                element={<PlaceholderPage title="Outfit Planner" />}
+              />
+              <Route
+                path="community"
+                element={<PlaceholderPage title="Komunitas" />}
+              />
+              <Route path="ai" element={<AskAI />} />
+              <Route
+                path="settings"
+                element={<PlaceholderPage title="Pengaturan Akun" />}
+              />
+              {/* Tambahkan rute terlindungi lainnya di dalam sini jika perlu */}
+            </Route>
+            <Route path="/profile" element={<UserProfile />} />
+          </Route>
+
+          {/* Rute 404 (jika path sama sekali tidak cocok) */}
+          <Route path="*" element={<PathError />} />
+        </Routes>
+      </Router>
+      <Toaster position="top-right" />
+    </>
   );
 }
 

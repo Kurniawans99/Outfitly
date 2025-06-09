@@ -6,6 +6,7 @@ import errorHandler from "./middlewares/error.middleware.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import geminiRouter from "./routes/gemini.routes.js";
+import wardrobeRouter from "./routes/wardrobe.routes.js";
 
 const app = express();
 const port = PORT || 5000;
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/ask", geminiRouter);
+app.use("/api/wardrobe", wardrobeRouter);
 
 app.use(errorHandler);
 

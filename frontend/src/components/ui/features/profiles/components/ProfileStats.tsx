@@ -1,7 +1,7 @@
 // src/components/features/profile/components/ProfileStats.tsx
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserStatsState } from "../profile.types";
+import { UserStatsState } from "@/services/profile/profile.types";
 
 interface ProfileStatsProps {
   stats: UserStatsState;

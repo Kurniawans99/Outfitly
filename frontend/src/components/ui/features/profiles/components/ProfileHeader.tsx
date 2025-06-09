@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; // Digunakan untuk input file
-import { ProfileDataState } from "../profile.types";
+import { ProfileDataState } from "@/services/profile/profile.types";
 
 interface ProfileHeaderProps {
   profileData: ProfileDataState;

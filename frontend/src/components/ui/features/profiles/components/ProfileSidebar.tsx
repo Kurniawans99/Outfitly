@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio"; // Untuk gambar di Most Popular
-import { OutfitData, UserStatsState } from "../profile.types"; // Impor tipe jika dibutuhkan untuk data dinamis
+import { OutfitData, UserStatsState } from "@/services/profile/profile.types"; // Impor tipe jika dibutuhkan untuk data dinamis
 
 // Data statis, nantinya bisa dari props atau API
 const quickStatsData = {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ApiUserData, ApiResponse, UpdateProfilePayload } from "../profile.types";
+import { ApiUserData, ApiResponse, UpdateProfilePayload } from "./profile.types";
 
 const getAuthToken = (): string | null => localStorage.getItem("authToken");
 const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
