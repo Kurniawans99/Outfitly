@@ -4,11 +4,14 @@ import {
   getWardrobeItems,
   updateWardrobeItem,
   deleteWardrobeItem,
+  getWardrobeCategories,
 } from "../controller/wardrobe.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
 
 const wardrobeRouter = Router();
+
+wardrobeRouter.route("/categories").get(protect, getWardrobeCategories);
 
 wardrobeRouter
   .route("/")

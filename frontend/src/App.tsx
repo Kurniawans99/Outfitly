@@ -23,7 +23,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useState } from "react";
 
 import { ProtectedRoute, PublicRoute } from "./components/auth/ProtectedRoutes";
-import WardrobePage from "./pages/Wardrobe";
+import WardrobePage from "./pages/WardrobePage";
 
 // Layout Utama untuk Halaman Dashboard (tetap sama)
 function DashboardLayout() {

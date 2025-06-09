@@ -1,5 +1,20 @@
 import WardrobeItem from "../models/wardrobe/wardrobeItem.model.js";
 import cloudinary from "../config/cloudinary.js";
+import streamifier from "streamifier";
+
+const streamUpload = (req) => {
+  return new Promise((resolve, reject) => {
+    let stream = cloudinary.uploader.upload_stream((error, result) => {
+      if (result) {
+        resolve(result);
+      } else {
+        reject(error);
+      }
+    });
+
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+  });
+};
 
 export const createWardrobeItem = async (req, res, next) => {
   try {
@@ -11,6 +26,10 @@ export const createWardrobeItem = async (req, res, next) => {
         .json({ success: false, message: "Gambar pakaian harus diunggah." });
     }
 
+    // Panggil helper function untuk upload ke Cloudinary
+    const result = await streamUpload(req);
+
+    // Buat item baru di database dengan URL dan public ID dari Cloudinary
     const newItem = await WardrobeItem.create({
       name,
       category,
@@ -18,8 +37,8 @@ export const createWardrobeItem = async (req, res, next) => {
       tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
       notes,
       user: req.user._id,
-      imageUrl: req.file.path,
-      imagePublicId: req.file.filename,
+      imageUrl: result.secure_url, // Gunakan URL aman dari Cloudinary
+      imagePublicId: result.public_id, // Gunakan public_id dari Cloudinary
     });
 
     res.status(201).json({ success: true, data: newItem });
@@ -33,12 +52,9 @@ export const getWardrobeItems = async (req, res, next) => {
     const { search, category, color } = req.query;
     let query = { user: req.user._id };
 
-    // Search functionality
     if (search) {
-      query.name = { $regex: search, $options: "i" }; // Case-insensitive search
+      query.name = { $regex: search, $options: "i" };
     }
-
-    // Filter functionality
     if (category) {
       query.category = category;
     }
@@ -68,7 +84,6 @@ export const updateWardrobeItem = async (req, res, next) => {
         .json({ success: false, message: "Item tidak ditemukan." });
     }
 
-    // Pastikan pengguna adalah pemilik item
     if (item.user.toString() !== req.user._id.toString()) {
       return res
         .status(401)
@@ -79,9 +94,13 @@ export const updateWardrobeItem = async (req, res, next) => {
     if (req.file) {
       // Hapus gambar lama dari Cloudinary
       await cloudinary.uploader.destroy(item.imagePublicId);
+
+      // Upload gambar baru ke Cloudinary
+      const result = await streamUpload(req);
+
       // Perbarui dengan URL dan public ID gambar baru
-      item.imageUrl = req.file.path;
-      item.imagePublicId = req.file.filename;
+      item.imageUrl = result.secure_url;
+      item.imagePublicId = result.public_id;
     }
 
     // Perbarui field lain dari req.body
@@ -112,20 +131,31 @@ export const deleteWardrobeItem = async (req, res, next) => {
         .json({ success: false, message: "Item tidak ditemukan." });
     }
 
-    // Check if user owns the item
     if (item.user.toString() !== req.user._id.toString()) {
       return res
         .status(401)
         .json({ success: false, message: "Tidak diizinkan." });
     }
 
-    // Delete image from Cloudinary
+    // Hapus gambar dari Cloudinary menggunakan public ID yang tersimpan
     await cloudinary.uploader.destroy(item.imagePublicId);
 
-    // Delete item from DB
+    // Hapus item dari database
     await item.deleteOne();
 
     res.status(200).json({ success: true, message: "Item berhasil dihapus." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWardrobeCategories = async (req, res, next) => {
+  try {
+    const categories = WardrobeItem.schema.path("category").enumValues;
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
   } catch (error) {
     next(error);
   }

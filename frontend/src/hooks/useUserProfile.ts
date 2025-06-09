@@ -1,22 +1,19 @@
-// src/services/profile/useUserProfile.ts
-
 import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { format } from "date-fns";
-import { toast } from "sonner"; // 1. Import toast dari sonner
+import { toast } from "sonner"; 
 import {
   ProfileDataState,
   UserStatsState,
   ApiUserData,
   UpdateProfilePayload,
-} from "./profile.types";
+} from "../services/profile/profile.types";
 import {
   fetchUserProfile,
   updateUserProfile,
   uploadAvatar,
   uploadCoverPhoto,
-} from "./profileService";
+} from "../services/profile/profileService";
 
-// ... (initialProfileData dan initialStats tetap sama) ...
 const initialProfileData: ProfileDataState = {
   name: "",
   username: "",

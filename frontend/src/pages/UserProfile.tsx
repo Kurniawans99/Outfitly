@@ -1,5 +1,5 @@
 // src/components/features/profile/UserProfilePage.tsx
-import { useUserProfile } from "@/services/profile/useUserProfile";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { ProfileLoadingSkeleton } from "@/components/ui/features/profiles/components/LoadingSkeleton";
 import { ProfileHeader } from "@/components/ui/features/profiles/components/ProfileHeader";
 import { ProfileStats } from "@/components/ui/features/profiles/components/ProfileStats";

@@ -24,6 +24,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
@@ -31,7 +38,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -52,27 +58,20 @@ import {
   createWardrobeItem,
   updateWardrobeItem,
   deleteWardrobeItem,
+  getWardrobeCategories,
 } from "@/services/wardrobeService";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Tipe data disesuaikan dengan model Mongoose
 type ClothingItem = {
   _id: string;
   name: string;
-  category:
-    | "Tops"
-    | "Bottoms"
-    | "Dresses"
-    | "Outerwear"
-    | "Shoes"
-    | "Accessories";
+  category: string;
   color: string;
   imageUrl: string;
   tags: string[];
   notes?: string;
 };
 
-// Komponen Kartu Pakaian (Tanpa Perubahan)
 const ClothingItemCard = ({
   item,
   onEdit,
@@ -132,42 +131,47 @@ const ClothingItemCard = ({
   </Card>
 );
 
-// Komponen Dialog Form dengan state dan handler file
 const ClothingFormDialog = ({
   isOpen,
   onOpenChange,
   itemToEdit,
   onSaveSuccess,
+  categories,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   itemToEdit: ClothingItem | null;
   onSaveSuccess: () => void;
+  categories: string[];
 }) => {
-  const [formData, setFormData] = useState<Partial<ClothingItem>>(
-    itemToEdit || {}
-  );
+  const [formData, setFormData] = useState<Partial<ClothingItem>>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setFormData(
-      itemToEdit || {
-        name: "",
-        category: "Tops",
-        color: "",
-        tags: [],
-        notes: "",
-      }
-    );
-    setSelectedFile(null); // Reset file input saat dialog dibuka
-  }, [itemToEdit, isOpen]);
+    if (isOpen) {
+      setFormData(
+        itemToEdit || {
+          name: "",
+          category: categories[0] || "",
+          color: "",
+          tags: [],
+          notes: "",
+        }
+      );
+      setSelectedFile(null);
+    }
+  }, [itemToEdit, isOpen, categories]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, category: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,6 +185,7 @@ const ClothingFormDialog = ({
     setIsSaving(true);
 
     const data = new FormData();
+    // Append all form data
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "tags" && Array.isArray(value)) {
         data.append(key, value.join(","));
@@ -240,15 +245,24 @@ const ClothingFormDialog = ({
                 required={!itemToEdit}
               />
             </div>
-            {/* Ganti dengan komponen Select di aplikasi nyata */}
             <div className="space-y-2">
               <Label htmlFor="category">Kategori</Label>
-              <Input
-                id="category"
-                value={formData.category || ""}
-                onChange={handleInputChange}
+              <Select
+                value={formData.category}
+                onValueChange={handleCategoryChange}
                 required
-              />
+              >
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Pilih kategori..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="color">Warna</Label>
@@ -305,7 +319,6 @@ const ClothingFormDialog = ({
   );
 };
 
-// Komponen Utama Halaman
 export default function WardrobePage() {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -313,6 +326,7 @@ export default function WardrobePage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<ClothingItem | null>(null);
   const [itemToDelete, setItemToDelete] = useState<ClothingItem | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   const fetchItems = useCallback(async () => {
     setIsLoading(true);
@@ -327,10 +341,21 @@ export default function WardrobePage() {
   }, [searchTerm]);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getWardrobeCategories();
+        setCategories(response.data);
+      } catch (error) {
+        toast.error("Gagal memuat kategori pakaian.");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     const handler = setTimeout(() => {
       fetchItems();
-    }, 300); // Debounce search
-
+    }, 300);
     return () => clearTimeout(handler);
   }, [fetchItems]);
 
@@ -349,7 +374,7 @@ export default function WardrobePage() {
     try {
       await deleteWardrobeItem(itemToDelete._id);
       toast.success(`"${itemToDelete.name}" berhasil dihapus.`);
-      fetchItems(); // Refresh list
+      fetchItems();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Gagal menghapus item.");
     } finally {
@@ -423,6 +448,7 @@ export default function WardrobePage() {
         onOpenChange={setIsFormOpen}
         itemToEdit={itemToEdit}
         onSaveSuccess={fetchItems}
+        categories={categories}
       />
 
       {itemToDelete && (

@@ -18,6 +18,12 @@ interface GetItemsParams {
   color?: string;
 }
 
+export const getWardrobeCategories = async () => {
+  const api = getAuthApi();
+  const response = await api.get("/categories");
+  return response.data;
+};
+
 export const getWardrobeItems = async (params: GetItemsParams) => {
   const api = getAuthApi();
   const response = await api.get("/", { params });
