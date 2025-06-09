@@ -24,8 +24,10 @@ import { useState } from "react";
 
 import { ProtectedRoute, PublicRoute } from "./components/auth/ProtectedRoutes";
 import WardrobePage from "./pages/WardrobePage";
+import { CommunityPage } from "./pages/CommunityPage";
+import { PostDetailPage } from "./pages/PostDetailPage";
 
-// Layout Utama untuk Halaman Dashboard (tetap sama)
+// Layout Utama untuk Halaman Dashboard
 function DashboardLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -43,7 +45,9 @@ function DashboardLayout() {
       <div className="flex-1 flex flex-col">
         <Header setMobileSidebarOpen={setMobileSidebarOpen} />
         <main className="flex-grow md:ml-64">
-          <div className="p-4 md:p-8">
+          {/* === PERUBAHAN DI SINI === */}
+          {/* Ganti `p-4 md:p-8` menjadi class yang memberikan padding-top lebih besar */}
+          <div className="px-4 pb-4 pt-8 md:px-8 md:pb-8 md:pt-8">
             <Outlet />
           </div>
         </main>
@@ -81,11 +85,13 @@ function App() {
                 path="planner"
                 element={<PlaceholderPage title="Outfit Planner" />}
               />
-              <Route
-                path="community"
-                element={<PlaceholderPage title="Komunitas" />}
-              />
+              <Route path="community" element={<CommunityPage />} />
               <Route path="ai" element={<AskAI />} />
+              <Route
+                path="settings"
+                element={<PlaceholderPage title="Pengaturan Akun" />}
+              />
+              <Route path="post/:postId" element={<PostDetailPage />} />
               <Route
                 path="settings"
                 element={<PlaceholderPage title="Pengaturan Akun" />}

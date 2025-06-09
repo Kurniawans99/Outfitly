@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Search,
@@ -10,7 +10,6 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -77,14 +76,13 @@ export function Header({
           <span className="sr-only">Toggle Menu</span>
         </Button>
 
-        {/* Input Pencarian */}
-        <div className="flex-1 relative hidden md:block">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-          <Input
-            type="search"
-            placeholder="Cari pakaian, inspirasi..."
-            className="pl-8 sm:w-full md:w-1/3 lg:w-1/2 bg-slate-50"
-          />
+        <div className="flex items-center gap-2">
+          <Link
+            to="/dashboard"
+            className="text-2xl font-extrabold text-foreground hover:text-indigo-600 transition-colors duration-200"
+          >
+            Outfitly
+          </Link>
         </div>
 
         {/* Ikon Aksi dan Menu Pengguna */}

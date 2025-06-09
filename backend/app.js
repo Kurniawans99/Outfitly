@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import geminiRouter from "./routes/gemini.routes.js";
 import wardrobeRouter from "./routes/wardrobe.routes.js";
+import communityRouter from "./routes/community.routes.js";
 
 const app = express();
 const port = PORT || 5000;
@@ -21,6 +22,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/ask", geminiRouter);
 app.use("/api/wardrobe", wardrobeRouter);
+app.use("/api/community", communityRouter);
 
 app.use(errorHandler);
 

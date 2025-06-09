@@ -1,0 +1,27 @@
+import mongoose from "mongoose";
+const replySchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      required: [true, "Isi balasan tidak boleh kosong."],
+      trim: true,
+      maxLength: [1000, "Balasan tidak boleh lebih dari 1000 karakter."],
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export default replySchema;

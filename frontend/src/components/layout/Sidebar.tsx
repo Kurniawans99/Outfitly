@@ -36,13 +36,8 @@ export function Sidebar() {
 
   return (
     // === PERUBAHAN DI SINI ===
-    <aside className="hidden md:flex md:flex-col md:w-64 bg-sidebar border-r border-sidebar-border h-screen md:fixed top-0 left-0 p-4">
-      <div className="mb-8 text-center">
-        <Link to="/dashboard" className="text-2xl font-bold text-foreground">
-          Outfitly
-        </Link>
-      </div>
-
+    // Ganti `p-4` menjadi `px-4 pb-4 pt-20` untuk menambahkan padding atas yang cukup (h-16 header + p-4 spasi).
+    <aside className="hidden md:flex md:flex-col md:w-64 bg-sidebar border-r border-sidebar-border h-screen md:fixed top-0 left-0 px-4 pb-4 pt-20">
       {/* Tambahkan overflow-y-auto agar list menu bisa scroll jika tidak muat */}
       <nav className="flex-grow overflow-y-auto">
         <ul>
