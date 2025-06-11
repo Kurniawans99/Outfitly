@@ -68,13 +68,11 @@ const SignUp: React.FC = () => {
         response.data.message || "Registration successful! Please login."
       );
 
-      // Kosongkan form setelah berhasil
       setUsername("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
 
-      // Redirect ke halaman login setelah beberapa detik
       setTimeout(() => {
         navigate("/signin");
       }, 2000);
@@ -82,18 +80,15 @@ const SignUp: React.FC = () => {
       setIsLoading(false);
       console.error("Error saat sign up:", err);
       if (axios.isAxiosError(err) && err.response) {
-        // Backend mengembalikan pesan error
         setError(
           err.response.data.message ||
             "Failed to register. Email may already be in use or input is invalid."
         );
       } else if (err.request) {
-        // Request dibuat tapi tidak ada respons
         setError(
           "Unable to connect to server. Check your internet connection."
         );
       } else {
-        // Error lainnya
         setError("An unknown error occurred. Please try again.");
       }
     }
@@ -105,101 +100,69 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(135deg, #2F4156 0%, #567C8D 50%, #C8D9E6 100%)",
-      }}
-    >
-      {/* Background decorative elements (tetap sama) */}
-      <div
-        className="absolute top-16 left-16 w-40 h-40 rounded-full opacity-10 blur-2xl"
-        style={{ backgroundColor: "#567C8D" }}
-      />
-      <div
-        className="absolute bottom-16 right-16 w-48 h-48 rounded-full opacity-10 blur-2xl"
-        style={{ backgroundColor: "#2F4156" }}
-      />
-      <div
-        className="absolute top-1/3 left-1/3 w-32 h-32 rounded-full opacity-8 blur-xl"
-        style={{ backgroundColor: "#F5EFEB" }}
-      />
-      <div
-        className="absolute bottom-1/3 right-1/3 w-24 h-24 rounded-full opacity-8 blur-lg"
-        style={{ backgroundColor: "#567C8D" }}
-      />
+    // DIUBAH: Mengganti min-h-screen menjadi h-screen untuk memastikan tinggi pas dengan layar
+    <div className="h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden ">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-16 w-72 h-72 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+        <div className="absolute top-40 right-16 w-80 h-80 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-32 left-32 w-64 h-64 bg-gradient-to-r from-indigo-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-blue-400 rounded-full animate-ping"></div>
+        <div className="absolute top-1/3 right-1/3 w-6 h-6 bg-purple-400 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-3 h-3 bg-indigo-400 rounded-full animate-bounce"></div>
+        <div
+          className="absolute inset-0 bg-white/20"
+          style={{
+            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(99, 102, 241, 0.05) 2px, transparent 2px)`,
+            backgroundSize: "50px 50px",
+          }}
+        ></div>
+      </div>
 
+      {/* DIUBAH: Mengurangi padding vertikal dari p-8 md:p-12 menjadi p-6 md:p-8 */}
       <div
-        className="backdrop-blur-xl border shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-lg relative z-10"
-        style={{
-          backgroundColor: "rgba(47, 65, 86, 0.85)",
-          borderColor: "rgba(86, 124, 141, 0.3)",
-        }}
+        className="backdrop-blur-sm bg-white/95 border border-gray-200/50 rounded-3xl p-6 md:p-8 w-full max-w-md relative z-10 
+             shadow-2xl 
+             transition-all duration-300 ease-in-out 
+             hover:shadow-2xl hover:shadow-blue-300 hover:-translate-y-1"
       >
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2" style={{ color: "#F5EFEB" }}>
+        {/* DIUBAH: Mengurangi margin bawah dari mb-8 menjadi mb-6 */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-gradient-to-r bg-gray-900 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+            <UserCircle className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Buat Akun Outfitly
           </h1>
-          <p className="text-sm" style={{ color: "#C8D9E6" }}>
-            Gabung dan temukan inspirasi gayamu!
-          </p>
+          <p className="text-gray-600">Gabung dan temukan inspirasi gayamu!</p>
         </div>
 
-        {/* === Area Pesan Error === */}
         {error && (
-          <div
-            className="mb-4 p-3 rounded-md flex items-center"
-            style={{
-              backgroundColor: "rgba(234, 67, 53, 0.2)",
-              border: "1px solid rgba(234, 67, 53, 0.5)",
-            }}
-          >
-            <AlertCircle
-              className="w-5 h-5 mr-2"
-              style={{ color: "#EA4335" }}
-            />
-            <span className="text-sm" style={{ color: "#F5EFEB" }}>
-              {error}
-            </span>
+          <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 flex items-center">
+            <AlertCircle className="w-5 h-5 mr-3 text-red-500 flex-shrink-0" />
+            <span className="text-sm text-red-700">{error}</span>
           </div>
         )}
 
-        {/* === Area Pesan Sukses === */}
         {successMessage && (
-          <div
-            className="mb-4 p-3 rounded-md flex items-center"
-            style={{
-              backgroundColor: "rgba(52, 168, 83, 0.2)",
-              border: "1px solid rgba(52, 168, 83, 0.5)",
-            }}
-          >
-            <CheckCircle
-              className="w-5 h-5 mr-2"
-              style={{ color: "#34A853" }}
-            />
-            <span className="text-sm" style={{ color: "#F5EFEB" }}>
-              {successMessage}
-            </span>
+          <div className="mb-4 p-3 rounded-xl bg-green-50 border border-green-200 flex items-center">
+            <CheckCircle className="w-5 h-5 mr-3 text-green-500 flex-shrink-0" />
+            <span className="text-sm text-green-700">{successMessage}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Full Name Input */}
-          <div className="relative">
+        {/* DIUBAH: Mengurangi jarak antar elemen form dari space-y-6 menjadi space-y-4 */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <UserCircle className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              <UserCircle className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
             </div>
             <input
               type="text"
               name="fullname"
               id="fullname"
-              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
-              style={{
-                backgroundColor: "rgba(86, 124, 141, 0.2)",
-                borderColor: "rgba(200, 217, 230, 0.3)",
-                color: "#F5EFEB",
-              }}
+              // DIUBAH: Mengurangi padding vertikal input dari py-4 menjadi py-3
+              className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200 hover:bg-gray-100 focus:bg-white"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -208,21 +171,16 @@ const SignUp: React.FC = () => {
             />
           </div>
 
-          {/* Email Input */}
-          <div className="relative">
+          <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Mail className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              <Mail className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
             </div>
             <input
               type="email"
               name="email_signup"
               id="email_signup"
-              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
-              style={{
-                backgroundColor: "rgba(86, 124, 141, 0.2)",
-                borderColor: "rgba(200, 217, 230, 0.3)",
-                color: "#F5EFEB",
-              }}
+              // DIUBAH: Mengurangi padding vertikal input dari py-4 menjadi py-3
+              className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200 hover:bg-gray-100 focus:bg-white"
               placeholder="Email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -231,21 +189,16 @@ const SignUp: React.FC = () => {
             />
           </div>
 
-          {/* Password Input */}
-          <div className="relative">
+          <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Lock className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              <Lock className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
             </div>
             <input
               type={showPassword ? "text" : "password"}
               name="password_signup"
               id="password_signup"
-              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
-              style={{
-                backgroundColor: "rgba(86, 124, 141, 0.2)",
-                borderColor: "rgba(200, 217, 230, 0.3)",
-                color: "#F5EFEB",
-              }}
+              // DIUBAH: Mengurangi padding vertikal input dari py-4 menjadi py-3
+              className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full pl-12 pr-12 py-3 transition-all duration-200 hover:bg-gray-100 focus:bg-white"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -255,32 +208,28 @@ const SignUp: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-3 right-3 hover:opacity-80 transition-opacity"
+              // DIUBAH: Menyesuaikan posisi ikon mata
+              className="absolute top-1/2 -translate-y-1/2 right-4 hover:opacity-80 transition-opacity"
               disabled={isLoading}
             >
               {showPassword ? (
-                <Eye className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+                <Eye className="w-5 h-5 text-gray-400" />
               ) : (
-                <EyeOff className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+                <EyeOff className="w-5 h-5 text-gray-400" />
               )}
             </button>
           </div>
 
-          {/* Confirm Password Input */}
-          <div className="relative">
+          <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <CheckCircle className="w-5 h-5" style={{ color: "#C8D9E6" }} />
+              <CheckCircle className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
             </div>
             <input
-              type={showPassword ? "text" : "password"} // Toggle type based on showPassword
+              type={showPassword ? "text" : "password"}
               name="confirm_password"
               id="confirm_password"
-              className="border text-sm rounded-xl focus:ring-2 focus:ring-[#567C8D] focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200"
-              style={{
-                backgroundColor: "rgba(86, 124, 141, 0.2)",
-                borderColor: "rgba(200, 217, 230, 0.3)",
-                color: "#F5EFEB",
-              }}
+              // DIUBAH: Mengurangi padding vertikal input dari py-4 menjadi py-3
+              className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full pl-12 pr-4 py-3 transition-all duration-200 hover:bg-gray-100 focus:bg-white"
               placeholder="Ulangi password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -289,70 +238,34 @@ const SignUp: React.FC = () => {
             />
           </div>
 
-          {/* Sign Up Button */}
           <button
             type="submit"
-            className="w-full font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 mt-6 flex justify-center items-center"
-            style={{
-              backgroundColor: isLoading ? "#C8D9E6" : "#F5EFEB",
-              color: "#2F4156",
-              boxShadow: "0 4px 12px rgba(245, 239, 235, 0.2)",
-            }}
-            onMouseEnter={(e) =>
-              !isLoading && changeBackgroundColor(e, "#FFFFFF")
-            }
-            onMouseLeave={(e) =>
-              !isLoading && changeBackgroundColor(e, "#F5EFEB")
-            }
+            // DIUBAH: Menambah margin atas (pt-2) untuk memberi sedikit ruang ekstra setelah input terakhir
+            className="w-full bg-gray-900 text-white py-3 px-4 rounded-xl font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center pt-2"
             disabled={isLoading}
           >
             {isLoading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
             ) : (
               "SIGN UP"
             )}
           </button>
 
-          {/* Divider (tetap sama) */}
-          <div className="relative">
+          {/* DIUBAH: Mengurangi margin vertikal divider dari my-8 menjadi my-4 */}
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div
-                className="w-full border-t"
-                style={{ borderColor: "rgba(86, 124, 141, 0.4)" }}
-              />
+              <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span
-                className="px-2"
-                style={{
-                  backgroundColor: "rgba(47, 65, 86, 0.85)",
-                  color: "#C8D9E6",
-                }}
-              >
-                atau
-              </span>
+              <span className="px-4 bg-white/95 text-gray-500">atau</span>
             </div>
           </div>
 
-          {/* Google Sign Up (Tombol didisable saat loading) */}
           <button
             type="button"
             onClick={handleGoogleSignUp}
-            className="w-full border font-medium rounded-xl py-3 px-6 focus:ring-4 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-3"
-            style={{
-              backgroundColor: isLoading
-                ? "rgba(86, 124, 141, 0.1)"
-                : "rgba(86, 124, 141, 0.3)",
-              borderColor: "rgba(200, 217, 230, 0.3)",
-              color: "#F5EFEB",
-              cursor: isLoading ? "not-allowed" : "pointer",
-            }}
-            onMouseEnter={(e) =>
-              !isLoading && changeBackgroundColor(e, "rgba(86, 124, 141, 0.5)")
-            }
-            onMouseLeave={(e) =>
-              !isLoading && changeBackgroundColor(e, "rgba(86, 124, 141, 0.3)")
-            }
+            // DIUBAH: Mengurangi padding vertikal tombol dari py-4 menjadi py-3
+            className="w-full bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-xl py-3 px-6 focus:ring-4 focus:ring-gray-200 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
             disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -376,14 +289,12 @@ const SignUp: React.FC = () => {
             <span>Daftar dengan Google</span>
           </button>
 
-          <p className="text-sm text-center mt-6" style={{ color: "#C8D9E6" }}>
+          {/* DIUBAH: Mengurangi margin atas dari mt-8 menjadi mt-4 */}
+          <p className="text-sm text-center text-gray-600 mt-4">
             Sudah punya akun?{" "}
             <Link
-              to={"/signin"}
-              className="font-medium transition-colors duration-200"
-              style={{ color: "#F5EFEB" }}
-              onMouseEnter={(e) => changeTextColor(e, "#567C8D")}
-              onMouseLeave={(e) => changeTextColor(e, "#F5EFEB")}
+              to="/signin"
+              className="font-semibold text-sky-600 hover:text-blue-700 hover:underline transition-colors duration-200"
             >
               Sign In disini
             </Link>
