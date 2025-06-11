@@ -163,10 +163,6 @@ export default function AskAI() {
     handleSendMessage(question);
   };
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
   return (
     <div className="min-h-full p-4 md:p-6 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-sky-100/50 via-white to-white">
       <div className="max-w-7xl mx-auto">

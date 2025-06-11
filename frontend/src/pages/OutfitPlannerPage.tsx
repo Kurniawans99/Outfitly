@@ -11,9 +11,9 @@ import {
   MoreVertical,
   Trash2,
   Calendar,
-  Sun, // --- BARU ---
-  Cloud, // --- BARU ---
-  CloudRain, // --- BARU ---
+  Sun,
+  Cloud,
+  CloudRain,
   Shirt,
   Pencil,
 } from "lucide-react";
@@ -25,14 +25,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator"; // --- BARU ---
-import { Input } from "@/components/ui/input"; // --- BARU ---
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import {
   SelectableItem,
   SelectOutfitDialog,
 } from "@/components/planner/SelectOutfitPlanner";
 
-// --- (MODIFIKASI) Data Dummy diperkaya dengan 'occasion' ---
 const dummyPlannedOutfits = {
   "2025-06-16": {
     id: "outfit1",
@@ -57,7 +56,7 @@ const dummyPlannedOutfits = {
   },
 };
 
-// --- BARU: Data Dummy untuk Cuaca ---
+//  Dummy untuk Cuaca ---
 const dummyWeather = {
   "2025-06-15": {
     icon: <Sun className="w-5 h-5 text-yellow-500" />,
@@ -89,7 +88,7 @@ const dummyWeather = {
   },
 };
 
-// --- BARU: Data Dummy untuk Saran Outfit dari Wardrobe ---
+// Data Dummy untuk Saran Outfit dari Wardrobe ---
 const dummySuggestedOutfits = [
   {
     id: "sug1",
@@ -123,10 +122,9 @@ type Outfit = {
   name: string;
   imageUrl: string;
   items: string[];
-  occasion?: string; // --- MODIFIKASI ---
+  occasion?: string;
 };
 
-// --- (MODIFIKASI) Komponen Kartu Outfit ---
 const PlannedOutfitCard = ({
   outfit,
   onRemove,
@@ -174,7 +172,6 @@ const PlannedOutfitCard = ({
   </div>
 );
 
-// --- (MODIFIKASI) Komponen Slot Kosong ---
 const EmptySlot = ({ onPlan }: { onPlan: () => void }) => (
   <button
     onClick={onPlan}
@@ -185,13 +182,11 @@ const EmptySlot = ({ onPlan }: { onPlan: () => void }) => (
   </button>
 );
 
-// --- Komponen Utama Halaman Planner ---
 export function OutfitPlannerPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [plannedOutfits, setPlannedOutfits] = useState(dummyPlannedOutfits);
   const [editingOccasion, setEditingOccasion] = useState<string | null>(null);
 
-  // --- BARU: State untuk mengontrol Dialog ---
   const [isSelectDialogOpen, setIsSelectDialogOpen] = useState(false);
   const [planningDate, setPlanningDate] = useState<Date | null>(null);
 

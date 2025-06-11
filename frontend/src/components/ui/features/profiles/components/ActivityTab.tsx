@@ -31,12 +31,13 @@ export const ActivityTab: React.FC = () => {
                 key={index}
                 className="flex items-start gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors"
               >
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-[6px]"></div>{" "}
-                {/* Indikator titik */}
+                {/* === PERUBAHAN WARNA DI SINI === */}
+                <div className="w-2 h-2 bg-sky-600 rounded-full mt-[6px]"></div>{" "}
                 <div className="flex-1">
                   <p className="text-slate-900 text-sm">
                     <span className="font-medium">{activity.action}</span>{" "}
-                    <span className="text-purple-700 font-semibold">
+                    {/* === PERUBAHAN WARNA DI SINI === */}
+                    <span className="text-sky-700 font-semibold">
                       {activity.item}
                     </span>
                   </p>

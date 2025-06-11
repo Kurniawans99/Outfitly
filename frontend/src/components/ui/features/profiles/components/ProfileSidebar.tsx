@@ -1,12 +1,12 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio"; // Untuk gambar di Most Popular
-import { OutfitData, UserStatsState } from "@/services/profile/profile.types"; // Impor tipe jika dibutuhkan untuk data dinamis
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { OutfitData, UserStatsState } from "@/services/profile/profile.types";
 
-// Data statis, nantinya bisa dari props atau API
+// Data statis
 const quickStatsData = {
   outfitsThisMonth: 12,
-  totalViews: "8.5K", // Bisa jadi number jika dari API
+  totalViews: "8.5K",
   avgLikes: 28,
 };
 
@@ -19,7 +19,6 @@ const styleTagsData = [
   "Street Style",
 ];
 
-// Menggunakan data outfit statis yang sama dengan OutfitsTab untuk contoh
 const popularOutfitsData: Pick<
   OutfitData,
   "id" | "image" | "title" | "likes"
@@ -39,11 +38,7 @@ const popularOutfitsData: Pick<
   },
 ];
 
-interface ProfileSidebarProps {
-  // stats?: UserStatsState; // Jika ingin mengambil stats dari API untuk Quick Stats
-  // userProfile?: ProfileDataState; // Jika ingin mengambil style tags dari data profil
-  // popularOutfits?: OutfitData[]; // Jika ingin mengambil data outfit populer dari API
-}
+interface ProfileSidebarProps {}
 
 export const ProfileSidebar: React.FC<
   ProfileSidebarProps
@@ -54,7 +49,6 @@ export const ProfileSidebar: React.FC<
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Quick Stats</CardTitle>{" "}
-          {/* Ukuran font disesuaikan */}
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex justify-between">
@@ -86,9 +80,10 @@ export const ProfileSidebar: React.FC<
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {styleTagsData.map((tag) => (
+              // === PERUBAHAN WARNA DI SINI ===
               <span
                 key={tag}
-                className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full"
+                className="px-3 py-1 bg-sky-100 text-sky-700 text-xs font-medium rounded-full"
               >
                 {tag}
               </span>

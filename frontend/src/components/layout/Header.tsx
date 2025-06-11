@@ -84,9 +84,10 @@ export function Header() {
       >
         {/* Kiri: Logo & Navigasi Mobile */}
         <div className="flex items-center gap-4">
+          {/* === PERUBAHAN DI SINI: Warna dan efek hover pada logo === */}
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 font-semibold text-lg text-primary"
+            className="flex items-center gap-2 font-semibold text-lg text-sky-600 transition-all duration-300 hover:text-sky-500 hover:scale-115"
           >
             <Shirt className="h-6 w-6" />
             <span className="hidden sm:inline-block">Outfitly</span>
@@ -99,11 +100,12 @@ export function Header() {
             <Link
               key={item.href}
               to={item.href}
-              className={`transition-colors hover:text-foreground ${
-                location.pathname.startsWith(item.href)
-                  ? "text-foreground font-semibold"
-                  : "text-muted-foreground"
-              }`}
+              className={` transition-transform  duration-200 hover:text-foreground hover:scale-110
+                        ${
+                          location.pathname.startsWith(item.href)
+                            ? "text-foreground font-semibold"
+                            : "text-muted-foreground"
+                        }`}
             >
               {item.isSpecial ? (
                 <div className="flex items-center gap-1">
@@ -117,7 +119,7 @@ export function Header() {
         </nav>
 
         {/* Kanan: Aksi & Profil (tidak ada perubahan) */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 hover:scalee-110">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Search className="h-4 w-4" />
             <span className="sr-only">Search</span>

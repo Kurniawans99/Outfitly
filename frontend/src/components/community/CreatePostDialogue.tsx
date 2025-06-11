@@ -1,3 +1,5 @@
+// src/components/community/CreatePostDialogue.tsx (REVISED)
+
 import { useState } from "react";
 import {
   Dialog,
@@ -12,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { BookText, MessageSquareText, Tag } from "lucide-react";
 
 interface CreatePostDialogProps {
   isOpen: boolean;
@@ -52,49 +55,68 @@ export function CreatePostDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Buat Postingan Baru</DialogTitle>
-          <DialogDescription>
-            Ajukan pertanyaan, bagikan OOTD, atau mulai diskusi fashion baru.
+      <DialogContent className="sm:max-w-[600px] bg-white/90 backdrop-blur-sm border-blue-100 shadow-2xl rounded-2xl">
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-2xl font-bold text-blue-800">
+            Buat Diskusi Baru
+          </DialogTitle>
+          <DialogDescription className="text-gray-500">
+            Bagikan inspirasi atau tanyakan sesuatu kepada komunitas.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+        <div className="space-y-6 py-4 px-2">
+          {/* Judul Input */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="title"
+              className="flex items-center text-gray-700 font-semibold"
+            >
+              <BookText className="w-4 h-4 mr-2 text-blue-500" />
               Judul
             </Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="col-span-3"
-              placeholder="Apa topik diskusimu?"
+              className="w-full border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80 shadow-sm"
+              placeholder="Contoh: Bagaimana cara styling kemeja flanel?"
             />
           </div>
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label htmlFor="content" className="text-right pt-2">
+
+          {/* Isi Postingan Input */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="content"
+              className="flex items-center text-gray-700 font-semibold"
+            >
+              <MessageSquareText className="w-4 h-4 mr-2 text-blue-500" />
               Isi Postingan
             </Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="col-span-3"
-              placeholder="Jelaskan lebih detail di sini..."
-              rows={6}
+              className="w-full min-h-52 border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80 shadow-sm"
+              placeholder="Jelaskan lebih detail tentang topik yang ingin kamu diskusikan..."
+              rows={8}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="tags" className="text-right">
+
+          {/* Tags Input */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="tags"
+              className="flex items-center text-gray-700 font-semibold"
+            >
+              <Tag className="w-4 h-4 mr-2 text-blue-500" />
               Tags
             </Label>
             <Input
               id="tags"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="col-span-3"
-              placeholder="Contoh: Casual, Tanya, OOTD (pisahkan dengan koma)"
+              className="w-full border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80 shadow-sm"
+              placeholder="Pisahkan dengan koma, contoh: OOTD, Casual, Vintage"
             />
           </div>
         </div>
@@ -103,13 +125,14 @@ export function CreatePostDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="border-gray-300 hover:bg-gray-100"
           >
             Batal
           </Button>
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-sky-600 hover:bg-sky-700"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out"
           >
             {isSaving ? "Menyimpan..." : "Publikasikan"}
           </Button>

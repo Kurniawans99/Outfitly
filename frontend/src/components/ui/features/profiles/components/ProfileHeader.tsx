@@ -4,7 +4,7 @@ import { Camera, Edit3, Save, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; // Digunakan untuk input file
+import { Label } from "@/components/ui/label";
 import { ProfileDataState } from "@/services/profile/profile.types";
 
 interface ProfileHeaderProps {
@@ -38,13 +38,13 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
       {/* Cover Photo */}
-      <div className="h-48 bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500 relative">
+      {/* === PERUBAHAN WARNA DI SINI === */}
+      <div className="h-48 bg-gradient-to-r from-sky-400 to-blue-500 relative">
         <img
           src={editData.coverPhotoUrl}
           alt="Cover"
           className="w-full h-full object-cover"
         />
-        {/* Kamu sudah menghapus div overlay hitam, bagus! */}
         {isEditing && (
           <Label
             htmlFor="coverPhotoInput"
@@ -70,8 +70,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       {/* Profile Info */}
       <div className="px-6 pb-6">
-        {/* PERUBAHAN DI SINI: Sesuaikan nilai -mt- */}
-        {/* Coba -mt-8 dulu, lalu -mt-4 atau bahkan tanpa margin negatif jika ingin lebih banyak ruang */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-8 relative">
           <div className="flex flex-col md:flex-row md:items-end gap-4">
             {/* Avatar */}
@@ -141,15 +139,16 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <Button
                   variant="outline"
                   onClick={onCancel}
-                  className="bg-red-600 hover:bg-red-600/80 hover:text-white text-white"
+                  className="bg-red-600 hover:bg-red-600/80 text-white hover:text-white"
                   disabled={isUploading !== false}
                 >
                   <X className="w-4 h-4 mr-2" />
                   Batal
                 </Button>
+                {/* === PERUBAHAN WARNA DI SINI === */}
                 <Button
                   onClick={onSave}
-                  className="bg-brand-teal hover:bg-brand-teal/90 hover:text-white text-white"
+                  className="bg-sky-600 hover:bg-sky-700 text-white"
                   disabled={isUploading !== false}
                 >
                   <Save className="w-4 h-4 mr-2" />
@@ -157,10 +156,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 </Button>
               </>
             ) : (
+              // === PERUBAHAN WARNA DI SINI ===
               <Button
                 variant="outline"
                 onClick={onEdit}
-                className="bg-brand-teal hover:bg-brand-teal/90 hover:text-white text-white"
+                className="bg-sky-600 hover:bg-sky-700 hover:text-white text-white"
               >
                 <Edit3 className="w-4 h-4 mr-2" />
                 Edit Profile

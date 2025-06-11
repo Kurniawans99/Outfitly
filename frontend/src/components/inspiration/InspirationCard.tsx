@@ -47,7 +47,7 @@ export const InspirationCard: React.FC<InspirationCardProps> = ({
 
   return (
     <div onClick={() => onClick(post)} className="group cursor-pointer">
-      <Card className="break-inside-avoid-column mb-4 overflow-hidden shadow-md group-hover:shadow-xl transition-shadow duration-300">
+      <Card className="overflow-hidden  transition-all duration-300 ease-in-out  hover:shadow-2xl hover:-translate-y-2">
         <div className="relative">
           <img
             src={post.imageUrl}

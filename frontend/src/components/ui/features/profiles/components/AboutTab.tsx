@@ -23,7 +23,7 @@ interface AboutTabProps {
     field: keyof Omit<
       ProfileDataState,
       "avatarUrl" | "coverPhotoUrl" | "joinDate" | "name" | "username"
-    >, // Lebih spesifik field yang bisa diedit di tab ini
+    >,
     value: string
   ) => void;
 }
@@ -31,11 +31,11 @@ interface AboutTabProps {
 const InfoItem: React.FC<{
   icon: React.ReactNode;
   isEditing: boolean;
-  label?: string; // Untuk placeholder atau label visual
+  label?: string;
   value: string | undefined;
   editValue: string | undefined;
-  field?: keyof ProfileDataState; // Hanya jika bisa diedit
-  onChange?: (value: string) => void; // Hanya jika bisa diedit
+  field?: keyof ProfileDataState;
+  onChange?: (value: string) => void;
   placeholder?: string;
   isLink?: boolean;
   inputType?: string;
@@ -71,7 +71,8 @@ const InfoItem: React.FC<{
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="text-slate-600 hover:text-purple-600 break-all"
+          // === PERUBAHAN WARNA DI SINI ===
+          className="text-slate-600 hover:text-sky-600 break-all"
         >
           {displayValue || "Belum diatur"}
         </a>
@@ -110,8 +111,9 @@ export const AboutTab: React.FC<AboutTabProps> = ({
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
+          {/* === PERUBAHAN WARNA DI SINI === */}
           <InfoItem
-            icon={<MapPin className="w-4 h-4 text-purple-600" />}
+            icon={<MapPin className="w-4 h-4 text-sky-600" />}
             isEditing={isEditing}
             value={profileData.location}
             editValue={editData.location}
@@ -120,13 +122,13 @@ export const AboutTab: React.FC<AboutTabProps> = ({
             placeholder="Lokasi"
           />
           <InfoItem
-            icon={<Calendar className="w-4 h-4 text-purple-600" />}
-            isEditing={false} // Join date tidak bisa diedit
+            icon={<Calendar className="w-4 h-4 text-sky-600" />}
+            isEditing={false}
             value={`Bergabung ${profileData.joinDate}`}
-            editValue="" // Tidak perlu karena tidak diedit
+            editValue=""
           />
           <InfoItem
-            icon={<Mail className="w-4 h-4 text-purple-600" />}
+            icon={<Mail className="w-4 h-4 text-sky-600" />}
             isEditing={isEditing}
             value={profileData.email}
             editValue={editData.email}
@@ -136,7 +138,7 @@ export const AboutTab: React.FC<AboutTabProps> = ({
             inputType="email"
           />
           <InfoItem
-            icon={<Phone className="w-4 h-4 text-purple-600" />}
+            icon={<Phone className="w-4 h-4 text-sky-600" />}
             isEditing={isEditing}
             value={profileData.phone}
             editValue={editData.phone}
@@ -154,6 +156,7 @@ export const AboutTab: React.FC<AboutTabProps> = ({
             Social Media & Website
           </h4>
           <div className="space-y-4">
+            {/* Ikon sosial media sengaja tidak diubah untuk mempertahankan warna brand */}
             <InfoItem
               icon={<Instagram className="w-5 h-5 text-pink-600" />}
               isEditing={isEditing}
