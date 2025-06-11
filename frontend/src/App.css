@@ -50,92 +50,97 @@ button {
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(0.9691 0.0038 33.02); /* Beige */
-  --foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --card: oklch(1 0 0); /* White */
-  --card-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --popover: oklch(1 0 0); /* White */
-  --popover-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
+  /* Ubah background utama menjadi putih */
+  --background: #ffffff; /* Putih murni */
+  /* Foreground: teks utama; gunakan kontras yang cukup, misalnya tekstur gelap */
+  --foreground: oklch(0.3074 0.0263 259.86); /* Navy atau warna teks gelap */
+  /* Card, Popover: latar sekunder, juga putih agar bersih */
+  --card: #ffffff;
+  --card-foreground: oklch(0.3074 0.0263 259.86);
+  --popover: #ffffff;
+  --popover-foreground: oklch(0.3074 0.0263 259.86);
+
+  /* Primary / Accent: sesuaikan sesuai branding; contoh di sini menggunakan Teal */
   --primary: oklch(0.5412 0.0401 234.57); /* Teal */
-  --primary-foreground: oklch(1 0 0); /* White */
+  --primary-foreground: #ffffff; /* teks pada elemen primary */
   --secondary: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --secondary-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --muted: oklch(0.93 0.01 260); /* Sangat terang biru-abu */
-  --muted-foreground: oklch(
-    0.45 0.03 234.57
-  ); /* Teal sedikit lebih gelap/desaturasi */
-  --accent: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --accent-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
+  --secondary-foreground: oklch(0.3074 0.0263 259.86);
+
+  --muted: oklch(0.93 0.01 260); /* latar muted, misal sangat terang biru-abu */
+  --muted-foreground: oklch(0.45 0.03 234.57);
+
+  --accent: oklch(0.879 0.0224 254.06);
+  --accent-foreground: oklch(0.3074 0.0263 259.86);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.008 255); /* Biru keabuan terang (dari Sky Blue) */
-  --input: oklch(0.9 0.008 255); /* Sama seperti border */
-  --ring: oklch(0.5412 0.0401 234.57); /* Teal */
 
-  /* Rekomendasi untuk Chart dari palet baru */
-  --chart-1: oklch(0.5412 0.0401 234.57); /* Teal */
-  --chart-2: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --chart-3: oklch(0.4 0.028 259.86); /* Varian Navy yang lebih terang */
-  --chart-4: oklch(0.65 0.04 234.57); /* Varian Teal yang lebih terang */
-  --chart-5: oklch(
-    0.75 0.02 254.06
-  ); /* Varian Sky Blue yang lebih gelap/desaturasi */
+  /* Border/Input/Ring: sesuaikan agar kontras di atas putih */
+  --border: oklch(0.9 0.008 255);
+  --input: oklch(0.9 0.008 255);
+  --ring: oklch(0.5412 0.0401 234.57);
 
-  /* Rekomendasi untuk Sidebar dari palet baru - Tema Terang */
-  --sidebar: oklch(1 0 0); /* White */
-  --sidebar-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --sidebar-primary: oklch(0.5412 0.0401 234.57); /* Teal */
-  --sidebar-primary-foreground: oklch(1 0 0); /* White */
-  --sidebar-accent: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --sidebar-accent-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --sidebar-border: oklch(0.9 0.008 255); /* Sama seperti --border */
-  --sidebar-ring: oklch(0.5412 0.0401 234.57); /* Teal */
+  /* Chart: bisa tetap menggunakan palet sebelumnya */
+  --chart-1: oklch(0.5412 0.0401 234.57);
+  --chart-2: oklch(0.879 0.0224 254.06);
+  --chart-3: oklch(0.4 0.028 259.86);
+  --chart-4: oklch(0.65 0.04 234.57);
+  --chart-5: oklch(0.75 0.02 254.06);
+
+  /* Sidebar tema terang: latar putih */
+  --sidebar: #ffffff;
+  --sidebar-foreground: oklch(0.3074 0.0263 259.86);
+  --sidebar-primary: oklch(0.5412 0.0401 234.57);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: oklch(0.879 0.0224 254.06);
+  --sidebar-accent-foreground: oklch(0.3074 0.0263 259.86);
+  --sidebar-border: oklch(0.9 0.008 255);
+  --sidebar-ring: oklch(0.5412 0.0401 234.57);
 }
 
 .dark {
-  /* Palet Warna Baru - Tema Gelap */
-  --background: oklch(0.3074 0.0263 259.86); /* Navy */
-  --foreground: oklch(0.9691 0.0038 33.02); /* Beige */
-  --card: oklch(0.35 0.028 259.86); /* Navy sedikit lebih terang */
-  --card-foreground: oklch(0.9691 0.0038 33.02); /* Beige */
-  --popover: oklch(0.35 0.028 259.86); /* Navy sedikit lebih terang */
-  --popover-foreground: oklch(0.9691 0.0038 33.02); /* Beige */
-  --primary: oklch(0.879 0.0224 254.06); /* Sky Blue (menonjol di atas Navy) */
+  /* Tema gelap: sesuaikan jika masih ingin latar gelap */
+  --background: oklch(0.15 0.02 259.86); /* contoh navy gelap */
+  --foreground: #ffffff; /* teks terang di atas latar gelap */
+  --card: oklch(0.25 0.022 259.86);
+  --card-foreground: #ffffff;
+  --popover: oklch(0.25 0.022 259.86);
+  --popover-foreground: #ffffff;
+
+  --primary: oklch(0.879 0.0224 254.06); /* Sky Blue */
   --primary-foreground: oklch(
     0.3074 0.0263 259.86
-  ); /* Navy (untuk kontras di atas Sky Blue) */
-  --secondary: oklch(0.5412 0.0401 234.57); /* Teal */
-  --secondary-foreground: oklch(1 0 0); /* White */
-  --muted: oklch(0.25 0.022 259.86); /* Navy lebih gelap */
-  --muted-foreground: oklch(0.65 0.035 234.57); /* Teal lebih terang */
-  --accent: oklch(0.5412 0.0401 234.57); /* Teal */
-  --accent-foreground: oklch(1 0 0); /* White */
-  --destructive: oklch(
-    0.704 0.191 22.216
-  ); /* Merah (dipertahankan dari sebelumnya untuk tema gelap) */
-  --border: oklch(
-    0.4 0.03 259.86
-  ); /* Varian Navy yang lebih terang untuk border */
-  --input: oklch(0.4 0.03 259.86); /* Sama seperti border */
-  --ring: oklch(0.879 0.0224 254.06); /* Sky Blue */
+  ); /* teks gelap di atas primary jika kontras memungkinkan */
+  --secondary: oklch(0.5412 0.0401 234.57);
+  --secondary-foreground: #ffffff;
 
-  /* Rekomendasi untuk Chart dari palet baru - Tema Gelap */
-  --chart-1: oklch(0.5412 0.0401 234.57); /* Teal */
-  --chart-2: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --chart-3: oklch(0.2 0.02 259.86); /* Varian Navy yang lebih gelap */
-  --chart-4: oklch(0.45 0.035 234.57); /* Varian Teal yang lebih gelap */
-  --chart-5: oklch(
-    0.6 0.02 254.06
-  ); /* Varian Sky Blue yang lebih gelap/desaturasi */
+  --muted: oklch(0.25 0.022 259.86);
+  --muted-foreground: oklch(0.65 0.035 234.57);
 
-  /* Rekomendasi untuk Sidebar dari palet baru - Tema Gelap */
-  --sidebar: oklch(0.25 0.022 259.86); /* Navy lebih gelap */
-  --sidebar-foreground: oklch(0.9691 0.0038 33.02); /* Beige */
-  --sidebar-primary: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --sidebar-primary-foreground: oklch(0.3074 0.0263 259.86); /* Navy */
-  --sidebar-accent: oklch(0.5412 0.0401 234.57); /* Teal */
-  --sidebar-accent-foreground: oklch(1 0 0); /* White */
-  --sidebar-border: oklch(0.4 0.03 259.86); /* Sama seperti --border */
-  --sidebar-ring: oklch(0.879 0.0224 254.06); /* Sky Blue */
+  --accent: oklch(0.5412 0.0401 234.57);
+  --accent-foreground: #ffffff;
+
+  --destructive: oklch(0.704 0.191 22.216);
+
+  --border: oklch(0.4 0.03 259.86);
+  --input: oklch(0.4 0.03 259.86);
+  --ring: oklch(0.879 0.0224 254.06);
+
+  /* Chart gelap */
+  --chart-1: oklch(0.5412 0.0401 234.57);
+  --chart-2: oklch(0.879 0.0224 254.06);
+  --chart-3: oklch(0.2 0.02 259.86);
+  --chart-4: oklch(0.45 0.035 234.57);
+  --chart-5: oklch(0.6 0.02 254.06);
+
+  /* Sidebar gelap */
+  --sidebar: oklch(0.25 0.022 259.86);
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: oklch(0.879 0.0224 254.06);
+  --sidebar-primary-foreground: oklch(0.3074 0.0263 259.86);
+  --sidebar-accent: oklch(0.5412 0.0401 234.57);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: oklch(0.4 0.03 259.86);
+  --sidebar-ring: oklch(0.879 0.0224 254.06);
 }
 
 @layer base {
