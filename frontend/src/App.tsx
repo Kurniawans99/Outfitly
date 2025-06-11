@@ -26,6 +26,8 @@ import { ProtectedRoute, PublicRoute } from "./components/auth/ProtectedRoutes";
 import WardrobePage from "./pages/WardrobePage";
 import { CommunityPage } from "./pages/CommunityPage";
 import { PostDetailPage } from "./pages/PostDetailPage";
+import { OutfitPlannerPage } from "./pages/OutfitPlannerPage";
+import { InspirationPage } from "./pages/InspirationPage";
 
 // Layout Utama untuk Halaman Dashboard
 function DashboardLayout() {
@@ -45,8 +47,6 @@ function DashboardLayout() {
       <div className="flex-1 flex flex-col">
         <Header setMobileSidebarOpen={setMobileSidebarOpen} />
         <main className="flex-grow md:ml-64">
-          {/* === PERUBAHAN DI SINI === */}
-          {/* Ganti `p-4 md:p-8` menjadi class yang memberikan padding-top lebih besar */}
           <div className="px-4 pb-4 pt-8 md:px-8 md:pb-8 md:pt-8">
             <Outlet />
           </div>
@@ -77,14 +77,9 @@ function App() {
               <Route index element={<Navigate to="overview" replace />} />
               <Route path="overview" element={<DashboardOverviewPage />} />
               <Route path="wardrobe" element={<WardrobePage />} />
-              <Route
-                path="inspiration"
-                element={<PlaceholderPage title="Inspirasi Outfit" />}
-              />
-              <Route
-                path="planner"
-                element={<PlaceholderPage title="Outfit Planner" />}
-              />
+              <Route path="inspiration" element={<InspirationPage />} />
+              <Route path="planner" element={<OutfitPlannerPage />} />
+
               <Route path="community" element={<CommunityPage />} />
               <Route path="ai" element={<AskAI />} />
               <Route
