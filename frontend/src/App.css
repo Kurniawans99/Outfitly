@@ -50,41 +50,52 @@ button {
 :root {
   --radius: 0.625rem;
 
-  /* Ubah background utama menjadi putih */
-  --background: #ffffff; /* Putih murni */
-  /* Foreground: teks utama; gunakan kontras yang cukup, misalnya tekstur gelap */
-  --foreground: oklch(0.3074 0.0263 259.86); /* Navy atau warna teks gelap */
-  /* Card, Popover: latar sekunder, juga putih agar bersih */
-  --card: #ffffff;
-  --card-foreground: oklch(0.3074 0.0263 259.86);
-  --popover: #ffffff;
-  --popover-foreground: oklch(0.3074 0.0263 259.86);
+  /* Latar Belakang & Teks Utama (Monokrom) */
+  --background: oklch(1 0 0); /* Putih bersih */
+  --foreground: oklch(
+    0.25 0.02 260
+  ); /* Teks utama: abu-abu gelap agar lebih lembut dari hitam pekat */
 
-  /* Primary / Accent: sesuaikan sesuai branding; contoh di sini menggunakan Teal */
-  --primary: oklch(0.5412 0.0401 234.57); /* Teal */
-  --primary-foreground: #ffffff; /* teks pada elemen primary */
-  --secondary: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --secondary-foreground: oklch(0.3074 0.0263 259.86);
+  /* Komponen Card & Popover */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.25 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.25 0.02 260);
 
-  --muted: oklch(0.93 0.01 260); /* latar muted, misal sangat terang biru-abu */
-  --muted-foreground: oklch(0.45 0.03 234.57);
+  /* Warna Aksen Utama (Biru Modern) */
+  --primary: oklch(
+    0.5412 0.0401 234.57
+  ); /* Biru yang sudah ada, bagus untuk tombol & link */
+  --primary-foreground: oklch(1 0 0); /* Teks di atas tombol primary: putih */
 
-  --accent: oklch(0.879 0.0224 254.06);
-  --accent-foreground: oklch(0.3074 0.0263 259.86);
+  /* Warna Sekunder (untuk hover, elemen non-aktif) */
+  --secondary: oklch(
+    0.97 0.003 260
+  ); /* Abu-abu sangat terang untuk latar hover */
+  --secondary-foreground: oklch(0.35 0.02 260); /* Teks untuk elemen sekunder */
 
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Warna Muted (untuk teks deskripsi, placeholder) */
+  --muted: oklch(0.97 0.003 260);
+  --muted-foreground: oklch(0.5 0.015 260); /* Teks muted yang lebih lembut */
 
-  /* Border/Input/Ring: sesuaikan agar kontras di atas putih */
-  --border: oklch(0.9 0.008 255);
-  --input: oklch(0.9 0.008 255);
-  --ring: oklch(0.5412 0.0401 234.57);
+  /* Warna Aksen (bisa sama dengan secondary untuk konsistensi) */
+  --accent: oklch(0.97 0.003 260);
+  --accent-foreground: oklch(0.35 0.02 260);
 
-  /* Chart: bisa tetap menggunakan palet sebelumnya */
+  /* Warna Destructive (untuk tombol hapus, error) */
+  --destructive: oklch(0.65 0.22 25); /* Merah yang tidak terlalu mencolok */
+
+  /* Border, Input, Ring */
+  --border: oklch(0.93 0.01 260); /* Border yang sangat halus */
+  --input: oklch(0.93 0.01 260); /* Latar input sama dengan border */
+  --ring: oklch(0.6 0.05 234.57); /* Ring focus (biru lebih terang) */
+
+  /* Chart (warna bisa tetap atau disesuaikan dengan aksen baru) */
   --chart-1: oklch(0.5412 0.0401 234.57);
-  --chart-2: oklch(0.879 0.0224 254.06);
-  --chart-3: oklch(0.4 0.028 259.86);
+  --chart-2: oklch(0.4 0.028 259.86);
+  --chart-3: oklch(0.75 0.02 254.06);
   --chart-4: oklch(0.65 0.04 234.57);
-  --chart-5: oklch(0.75 0.02 254.06);
+  --chart-5: oklch(0.879 0.0224 254.06);
 
   /* Sidebar tema terang: latar putih */
   --sidebar: #ffffff;
@@ -97,57 +108,12 @@ button {
   --sidebar-ring: oklch(0.5412 0.0401 234.57);
 }
 
-.dark {
-  /* Tema gelap: sesuaikan jika masih ingin latar gelap */
-  --background: oklch(0.15 0.02 259.86); /* contoh navy gelap */
-  --foreground: #ffffff; /* teks terang di atas latar gelap */
-  --card: oklch(0.25 0.022 259.86);
-  --card-foreground: #ffffff;
-  --popover: oklch(0.25 0.022 259.86);
-  --popover-foreground: #ffffff;
-
-  --primary: oklch(0.879 0.0224 254.06); /* Sky Blue */
-  --primary-foreground: oklch(
-    0.3074 0.0263 259.86
-  ); /* teks gelap di atas primary jika kontras memungkinkan */
-  --secondary: oklch(0.5412 0.0401 234.57);
-  --secondary-foreground: #ffffff;
-
-  --muted: oklch(0.25 0.022 259.86);
-  --muted-foreground: oklch(0.65 0.035 234.57);
-
-  --accent: oklch(0.5412 0.0401 234.57);
-  --accent-foreground: #ffffff;
-
-  --destructive: oklch(0.704 0.191 22.216);
-
-  --border: oklch(0.4 0.03 259.86);
-  --input: oklch(0.4 0.03 259.86);
-  --ring: oklch(0.879 0.0224 254.06);
-
-  /* Chart gelap */
-  --chart-1: oklch(0.5412 0.0401 234.57);
-  --chart-2: oklch(0.879 0.0224 254.06);
-  --chart-3: oklch(0.2 0.02 259.86);
-  --chart-4: oklch(0.45 0.035 234.57);
-  --chart-5: oklch(0.6 0.02 254.06);
-
-  /* Sidebar gelap */
-  --sidebar: oklch(0.25 0.022 259.86);
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: oklch(0.879 0.0224 254.06);
-  --sidebar-primary-foreground: oklch(0.3074 0.0263 259.86);
-  --sidebar-accent: oklch(0.5412 0.0401 234.57);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: oklch(0.4 0.03 259.86);
-  --sidebar-ring: oklch(0.879 0.0224 254.06);
-}
-
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: theme("fontFamily.sans");
   }
 }

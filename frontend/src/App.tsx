@@ -36,22 +36,12 @@ import { InspirationPage } from "./pages/InspirationPage";
 // === PERUBAHAN DI SINI ===
 // Layout Utama untuk Halaman Dashboard disederhanakan
 function DashboardLayout() {
-  // State `mobileSidebarOpen` tidak lagi diperlukan
-  // const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
   return (
-    // Hapus flex, karena layout sekarang lebih sederhana (top-down)
-    <div className="min-h-screen bg-slate-100">
-      {/* Hapus Sidebar dan Sheet */}
-      {/* Header tidak lagi memerlukan prop `setMobileSidebarOpen` */}
+    // Ubah `bg-slate-50` menjadi `bg-background`
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      {/* Hapus `flex-1 flex flex-col` dan `md:ml-64` dari wrapper main.
-        Biarkan <Outlet/> dirender langsung di dalam <main>.
-      */}
-      <main className="container max-w-screen-2xl">
-        <div className="px-4 pb-4 pt-8 md:px-8 md:pb-8 md:pt-8">
-          <Outlet />
-        </div>
+      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <Outlet />
       </main>
     </div>
   );
