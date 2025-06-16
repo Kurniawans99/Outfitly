@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2, Edit } from "lucide-react";
-import { ClothingItem } from "@/pages/WardrobePage";
+import { ClothingItem } from "@/services/wardrobeService";
 
 export const ClothingDetailDialog = ({
   item,

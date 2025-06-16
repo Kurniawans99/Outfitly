@@ -32,6 +32,7 @@ import { CommunityPage } from "./pages/CommunityPage";
 import { PostDetailPage } from "./pages/PostDetailPage";
 import { OutfitPlannerPage } from "./pages/OutfitPlannerPage";
 import { InspirationPage } from "./pages/InspirationPage";
+import WardrobeDetailPage from "./components/wardrobe/WardrobeDetailPage";
 
 // === PERUBAHAN DI SINI ===
 // Layout Utama untuk Halaman Dashboard disederhanakan
@@ -52,7 +53,6 @@ function App() {
     <>
       <Router>
         <Routes>
-          {/* Rute tidak berubah */}
           <Route element={<PublicRoute />}>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
@@ -64,7 +64,13 @@ function App() {
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Navigate to="overview" replace />} />
               <Route path="overview" element={<DashboardOverviewPage />} />
+              {/* --- MODIFIED ROUTE --- */}
               <Route path="wardrobe" element={<WardrobePage />} />
+              {/* --- NEW ROUTE --- */}
+              <Route
+                path="wardrobe/:wardrobeId"
+                element={<WardrobeDetailPage />}
+              />
               <Route path="inspiration" element={<InspirationPage />} />
               <Route path="planner" element={<OutfitPlannerPage />} />
               <Route path="community" element={<CommunityPage />} />

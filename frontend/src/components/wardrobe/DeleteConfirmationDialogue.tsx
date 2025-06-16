@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ClothingItem } from "@/pages/WardrobePage";
+import { ClothingItem } from "@/services/wardrobeService";
 
 interface DeleteConfirmationDialogProps {
   item: ClothingItem | null;

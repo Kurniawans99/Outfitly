@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const wardrobeItemSchema = new mongoose.Schema(
   {
+    wardrobe: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Wardrobe",
+      required: [true, "Item harus menjadi bagian dari satu lemari."],
+      index: true,
+    },
     name: {
       type: String,
       required: [true, "Nama pakaian harus diisi."],

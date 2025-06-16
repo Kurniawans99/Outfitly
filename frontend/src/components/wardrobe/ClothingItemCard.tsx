@@ -1,4 +1,4 @@
-import { ClothingItem } from "@/pages/WardrobePage";
+import { ClothingItem } from "@/services/wardrobeService";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { Expand } from "lucide-react";

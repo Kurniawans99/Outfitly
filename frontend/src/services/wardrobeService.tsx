@@ -1,8 +1,14 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL + "/wardrobe";
+export interface Wardrobe {
+  _id: string;
+  name: string;
+  description: string;
+  itemCount: number;
+  itemImageUrls: string[]; // For preview
+}
 
-export interface WardrobeItem {
+export interface ClothingItem {
   _id: string;
   name: string;
   category: string;
@@ -17,9 +23,16 @@ export interface WardrobeItem {
 interface GetItemsResponse {
   success: boolean;
   count: number;
-  data: WardrobeItem[];
+  data: ClothingItem[];
 }
 
+interface GetWardrobesResponse {
+  success: boolean;
+  count: number;
+  data: Wardrobe[];
+}
+
+const API_URL = import.meta.env.VITE_API_BASE_URL + "/wardrobe";
 const getAuthApi = () => {
   const token = localStorage.getItem("authToken");
   return axios.create({
@@ -30,11 +43,44 @@ const getAuthApi = () => {
   });
 };
 
-interface GetItemsParams {
+export const getWardrobes = async (params: {
   search?: string;
-  category?: string;
-  color?: string;
-}
+}): Promise<GetWardrobesResponse> => {
+  const api = getAuthApi();
+  // Assuming the endpoint for listing wardrobes is the root GET
+  const response = await api.get("/lists", { params }); // Example endpoint
+  return response.data;
+};
+
+export const createWardrobe = async (data: {
+  name: string;
+  description: string;
+}) => {
+  const api = getAuthApi();
+  const response = await api.post("/lists", data); // Example endpoint
+  return response.data;
+};
+
+export const getWardrobeItems = async (
+  wardrobeId: string,
+  params: { search?: string; category?: string; color?: string }
+): Promise<GetItemsResponse> => {
+  const api = getAuthApi();
+  // The route now includes the wardrobeId
+  const response = await api.get(`/lists/${wardrobeId}/items`, { params });
+  return response.data;
+};
+
+export const createWardrobeItem = async (
+  wardrobeId: string,
+  formData: FormData
+) => {
+  const api = getAuthApi();
+  const response = await api.post(`/lists/${wardrobeId}/items`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
 
 export const getWardrobeCategories = async () => {
   const api = getAuthApi();
@@ -42,26 +88,8 @@ export const getWardrobeCategories = async () => {
   return response.data;
 };
 
-export const getWardrobeItems = async (
-  params: GetItemsParams
-): Promise<GetItemsResponse> => {
-  const api = getAuthApi();
-  const response = await api.get("/", { params });
-  return response.data;
-};
-
-export const createWardrobeItem = async (formData: FormData) => {
-  const api = getAuthApi();
-  // Set header untuk form data secara eksplisit
-  const response = await api.post("/", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return response.data;
-};
-
 export const updateWardrobeItem = async (id: string, formData: FormData) => {
   const api = getAuthApi();
-  // Set header untuk form data secara eksplisit
   const response = await api.put(`/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });

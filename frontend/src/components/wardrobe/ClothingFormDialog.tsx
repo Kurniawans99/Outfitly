@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { UploadCloud } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ import {
   createWardrobeItem,
   updateWardrobeItem,
 } from "@/services/wardrobeService";
-import { ClothingItem } from "@/pages/WardrobePage";
+import { ClothingItem } from "@/services/wardrobeService";
 
 export const ClothingFormDialog = ({
   isOpen,
@@ -32,16 +32,18 @@ export const ClothingFormDialog = ({
   itemToEdit,
   onSaveSuccess,
   categories,
+  wardrobeId,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   itemToEdit: ClothingItem | null;
   onSaveSuccess: () => void;
   categories: string[];
+  wardrobeId: string;
 }) => {
   const [formData, setFormData] = useState<Partial<ClothingItem>>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // State untuk URL pratinjau
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +57,7 @@ export const ClothingFormDialog = ({
         notes: "",
       };
       setFormData(initialData);
-      setPreviewUrl(itemToEdit?.imageUrl || null); // Set pratinjau awal
+      setPreviewUrl(itemToEdit?.imageUrl || null);
       setSelectedFile(null);
     }
   }, [itemToEdit, isOpen]);
@@ -90,8 +92,11 @@ export const ClothingFormDialog = ({
     if (selectedFile) data.append("image", selectedFile);
 
     try {
-      if (itemToEdit?._id) await updateWardrobeItem(itemToEdit._id, data);
-      else await createWardrobeItem(data);
+      if (itemToEdit?._id) {
+        await updateWardrobeItem(itemToEdit._id, data);
+      } else {
+        await createWardrobeItem(wardrobeId, data);
+      }
       toast.success(
         itemToEdit
           ? "Pakaian berhasil diperbarui!"
@@ -108,10 +113,10 @@ export const ClothingFormDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-3xl   p-0">
+      <DialogContent className="min-w-3xl p-0">
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* KOLOM KIRI: PRATINJAU GAMBAR INTERAKTIF */}
+            {/* Kolom Kiri: Pratinjau Gambar */}
             <div className="p-8 flex flex-col items-center justify-center bg-slate-50 md:rounded-l-lg">
               <input
                 type="file"
@@ -150,14 +155,13 @@ export const ClothingFormDialog = ({
               </Button>
             </div>
 
-            {/* KOLOM KANAN: FORM INPUT DATA */}
+            {/* Kolom Kanan: Form Input */}
             <div className="p-8 flex flex-col space-y-6">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold">
                   {itemToEdit ? "Edit Pakaian" : "Tambah Pakaian Baru"}
                 </DialogTitle>
               </DialogHeader>
-
               <div className="space-y-4 flex-grow">
                 <div>
                   <Label htmlFor="name" className="font-semibold">
@@ -173,7 +177,6 @@ export const ClothingFormDialog = ({
                     required
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="category" className="font-semibold">
@@ -212,7 +215,6 @@ export const ClothingFormDialog = ({
                     />
                   </div>
                 </div>
-
                 <div>
                   <Label htmlFor="tags" className="font-semibold">
                     Tags
@@ -235,7 +237,6 @@ export const ClothingFormDialog = ({
                     }
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="notes" className="font-semibold">
                     Catatan
@@ -246,11 +247,10 @@ export const ClothingFormDialog = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, notes: e.target.value }))
                     }
-                    className="mt-1 min-h-52"
+                    className="mt-1 min-h-[120px]"
                   />
                 </div>
               </div>
-
               <DialogFooter className="pt-4 border-t">
                 <Button
                   type="button"
