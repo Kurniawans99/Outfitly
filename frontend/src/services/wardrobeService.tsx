@@ -20,6 +20,15 @@ export interface ClothingItem {
   updatedAt: string;
 }
 
+export interface CreateItemFromUrlPayload {
+  name: string;
+  category: string;
+  color: string;
+  tags: string[];
+  notes?: string;
+  imageUrl: string; // URL gambar dari item inspirasi
+}
+
 interface GetItemsResponse {
   success: boolean;
   count: number;
@@ -58,6 +67,18 @@ export const createWardrobe = async (data: {
 }) => {
   const api = getAuthApi();
   const response = await api.post("/lists", data); // Example endpoint
+  return response.data;
+};
+
+export const createWardrobeItemFromUrl = async (
+  wardrobeId: string,
+  payload: CreateItemFromUrlPayload
+) => {
+  const api = getAuthApi();
+  const response = await api.post(
+    `/lists/${wardrobeId}/items/from-url`,
+    payload
+  );
   return response.data;
 };
 

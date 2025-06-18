@@ -85,12 +85,10 @@ export const updateWardrobe = async (req, res, next) => {
     );
 
     if (!wardrobe) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Lemari tidak ditemukan atau Anda tidak punya akses.",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Lemari tidak ditemukan atau Anda tidak punya akses.",
+      });
     }
     res.status(200).json({ success: true, data: wardrobe });
   } catch (error) {
@@ -107,12 +105,10 @@ export const deleteWardrobe = async (req, res, next) => {
     });
 
     if (!wardrobe) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Lemari tidak ditemukan atau Anda tidak punya akses.",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Lemari tidak ditemukan atau Anda tidak punya akses.",
+      });
     }
 
     // Hapus semua item di dalam lemari ini terlebih dahulu
@@ -122,12 +118,10 @@ export const deleteWardrobe = async (req, res, next) => {
     // Hapus lemari itu sendiri
     await wardrobe.deleteOne();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Lemari dan semua isinya berhasil dihapus.",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Lemari dan semua isinya berhasil dihapus.",
+    });
   } catch (error) {
     next(error);
   }
@@ -267,6 +261,48 @@ export const getWardrobeCategories = async (req, res, next) => {
       success: true,
       data: categories,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createWardrobeItemFromUrl = async (req, res, next) => {
+  try {
+    const { wardrobeId } = req.params;
+    const { name, category, color, tags, notes, imageUrl } = req.body;
+
+    if (!name || !category || !imageUrl || !wardrobeId) {
+      return res.status(400).json({
+        success: false,
+        message: "Nama, kategori, URL gambar, dan ID lemari wajib diisi.",
+      });
+    }
+
+    const result = await cloudinary.uploader.upload(imageUrl, {
+      folder: "wardrobe-items",
+    });
+
+    // Perbaikan penanganan tags
+    let processedTags = [];
+    if (typeof tags === "string") {
+      processedTags = tags.split(",").map((tag) => tag.trim());
+    } else if (Array.isArray(tags)) {
+      processedTags = tags;
+    }
+
+    const newItem = await WardrobeItem.create({
+      wardrobe: wardrobeId,
+      name,
+      category,
+      color,
+      tags: processedTags,
+      notes,
+      user: req.user._id,
+      imageUrl: result.secure_url,
+      imagePublicId: result.public_id,
+    });
+
+    res.status(201).json({ success: true, data: newItem });
   } catch (error) {
     next(error);
   }

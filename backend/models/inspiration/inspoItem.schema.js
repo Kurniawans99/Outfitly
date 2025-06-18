@@ -8,8 +8,8 @@ const inspoItemSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: [true, "Kategori item harus diisi."],
-    trim: true,
+    required: [true, "Kategori harus dipilih."],
+    enum: ["Tops", "Bottoms", "Dresses", "Outerwear", "Shoes", "Accessories"],
   },
   brand: {
     type: String,

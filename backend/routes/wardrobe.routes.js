@@ -12,6 +12,7 @@ import {
   updateWardrobeItem,
   deleteWardrobeItem,
   getWardrobeCategories,
+  createWardrobeItemFromUrl,
 } from "../controller/wardrobe.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
@@ -43,5 +44,9 @@ wardrobeRouter
   .route("/items/:id")
   .put(protect, upload.single("image"), updateWardrobeItem)
   .delete(protect, deleteWardrobeItem);
+
+wardrobeRouter
+  .route("/lists/:wardrobeId/items/from-url")
+  .post(protect, createWardrobeItemFromUrl);
 
 export default wardrobeRouter;
