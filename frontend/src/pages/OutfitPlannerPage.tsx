@@ -1,6 +1,6 @@
 // src/pages/OutfitPlannerPage.tsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react"; // <-- Import useMemo
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import {
   CloudRain,
   Shirt,
   Pencil,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -31,32 +32,16 @@ import {
   SelectableItem,
   SelectOutfitDialog,
 } from "@/components/planner/SelectOutfitPlanner";
+import { toast } from "sonner";
+import {
+  getPlannedOutfits,
+  planOutfit,
+  deletePlannedOutfit,
+  PlannedOutfit,
+} from "@/services/planner/plannerService";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const dummyPlannedOutfits = {
-  "2025-06-16": {
-    id: "outfit1",
-    name: "Meeting Klien",
-    imageUrl: "/api/placeholder/400/500?text=Office+Look",
-    items: ["Kemeja Biru", "Celana Chino", "Loafers"],
-    occasion: "Presentasi proyek penting",
-  },
-  "2025-06-18": {
-    id: "outfit2",
-    name: "Casual Hangout",
-    imageUrl: "/api/placeholder/400/500?text=Casual+Vibe",
-    items: ["T-shirt Putih", "Jeans", "Sneakers"],
-    occasion: "Nongkrong di kafe",
-  },
-  "2025-06-20": {
-    id: "outfit3",
-    name: "Friday Work",
-    imageUrl: "/api/placeholder/400/500?text=Smart+Casual",
-    items: ["Polo Shirt", "Celana Kain", "Sepatu Derby"],
-    occasion: "Kerja santai & Buka Bersama",
-  },
-};
-
-//  Dummy untuk Cuaca ---
+// Data Dummy untuk Cuaca (tetap sama, karena belum ada API cuaca) ---
 const dummyWeather = {
   "2025-06-15": {
     icon: <Sun className="w-5 h-5 text-yellow-500" />,
@@ -88,7 +73,7 @@ const dummyWeather = {
   },
 };
 
-// Data Dummy untuk Saran Outfit dari Wardrobe ---
+// Data Dummy untuk Saran Outfit dari Wardrobe (tetap sama untuk saat ini) ---
 const dummySuggestedOutfits = [
   {
     id: "sug1",
@@ -117,34 +102,31 @@ const dummySuggestedOutfits = [
   },
 ];
 
-type Outfit = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  items: string[];
-  occasion?: string;
-};
-
 const PlannedOutfitCard = ({
   outfit,
   onRemove,
 }: {
-  outfit: Outfit;
+  outfit: PlannedOutfit; // Menggunakan tipe PlannedOutfit yang baru
   onRemove: () => void;
 }) => (
   <div className="relative group h-full">
     <AspectRatio ratio={4 / 5} className="overflow-hidden rounded-lg">
       <img
-        src={outfit.imageUrl}
-        alt={outfit.name}
+        src={
+          outfit.items[0]?.item?.imageUrl ||
+          "/api/placeholder/400/500?text=No+Image"
+        } // Ambil gambar dari item pertama
+        alt={outfit.outfitName || "Planned Outfit"}
         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
     </AspectRatio>
     <div className="absolute bottom-0 left-0 p-3 w-full">
-      <h4 className="font-bold text-white text-sm truncate">{outfit.name}</h4>
+      <h4 className="font-bold text-white text-sm truncate">
+        {outfit.outfitName || "Outfit Terencana"}
+      </h4>
       <p className="text-xs text-slate-200 truncate">
-        {outfit.items.join(", ")}
+        {outfit.items.map((i) => i.item.name).join(", ")}
       </p>
     </div>
     <div className="absolute top-2 right-2">
@@ -184,23 +166,63 @@ const EmptySlot = ({ onPlan }: { onPlan: () => void }) => (
 
 export function OutfitPlannerPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [plannedOutfits, setPlannedOutfits] = useState(dummyPlannedOutfits);
+  // Gunakan Map untuk menyimpan planned outfits, key-nya adalah tanggal ISO string
+  const [plannedOutfits, setPlannedOutfits] = useState<
+    Map<string, PlannedOutfit>
+  >(new Map());
   const [editingOccasion, setEditingOccasion] = useState<string | null>(null);
 
   const [isSelectDialogOpen, setIsSelectDialogOpen] = useState(false);
   const [planningDate, setPlanningDate] = useState<Date | null>(null);
+  const [isLoadingOutfits, setIsLoadingOutfits] = useState(true);
 
-  const getWeekDays = (date: Date) => {
-    const startOfWeek = new Date(date);
+  // === PERUBAHAN DI SINI: Gunakan useMemo untuk weekDays ===
+  const weekDays = useMemo(() => {
+    const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
     return Array.from({ length: 7 }).map((_, i) => {
       const day = new Date(startOfWeek);
       day.setDate(day.getDate() + i);
       return day;
     });
-  };
+  }, [currentDate]); // Dependensi hanya pada currentDate
 
-  const weekDays = getWeekDays(currentDate);
+  const formatDateToKey = (date: Date) => date.toISOString().split("T")[0];
+
+  const fetchPlannedOutfits = useCallback(async () => {
+    setIsLoadingOutfits(true);
+    try {
+      const startOfCurrentWeek = weekDays[0];
+      const endOfCurrentWeek = weekDays[6];
+
+      // Fungsi helper untuk format YYYY-MM-DD
+      const toYYYYMMDD = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const response = await getPlannedOutfits(
+        toYYYYMMDD(startOfCurrentWeek),
+        toYYYYMMDD(endOfCurrentWeek)
+      );
+      const newPlannedOutfits = new Map<string, PlannedOutfit>();
+      response.data.forEach((outfit) => {
+        newPlannedOutfits.set(formatDateToKey(new Date(outfit.date)), outfit);
+      });
+      setPlannedOutfits(newPlannedOutfits);
+    } catch (error) {
+      toast.error("Gagal memuat outfit planner.");
+      console.error("Error fetching planned outfits:", error);
+    } finally {
+      setIsLoadingOutfits(false);
+    }
+  }, [weekDays]); // fetchPlannedOutfits sekarang hanya akan berubah jika weekDays berubah
+
+  useEffect(() => {
+    fetchPlannedOutfits();
+  }, [fetchPlannedOutfits]); // Panggil fetchPlannedOutfits ketika referensinya berubah (yaitu, ketika weekDays berubah)
 
   const handleNextWeek = () => {
     setCurrentDate(
@@ -213,55 +235,51 @@ export function OutfitPlannerPage() {
     );
   };
 
-  const formatDateToKey = (date: Date) => date.toISOString().split("T")[0];
-
   const handlePlanOutfit = (date: Date) => {
     setPlanningDate(date);
     setIsSelectDialogOpen(true);
   };
 
-  const handleSelectItemAndPlan = (item: SelectableItem) => {
-    if (planningDate) {
-      const dateKey = formatDateToKey(planningDate);
+  const handleOutfitPlannedSuccess = () => {
+    fetchPlannedOutfits(); // Re-fetch data setelah outfit berhasil direncanakan
+  };
 
-      // Buat objek outfit baru berdasarkan item yang dipilih
-      const newPlannedOutfit: Outfit = {
-        id: item.id,
-        name: item.name,
-        imageUrl: item.imageUrl,
-        items: item.items || [item.name], // Jika setelan, gunakan items[], jika tidak, gunakan namanya sendiri
-        occasion: "", // Kosongkan catatan acara, biarkan pengguna mengisinya
-      };
-
-      // Update state planner
-      setPlannedOutfits((prev) => ({
-        ...prev,
-        [dateKey]: newPlannedOutfit,
-      }));
+  const handleRemoveOutfit = async (outfitId: string) => {
+    try {
+      await deletePlannedOutfit(outfitId);
+      toast.success("Outfit berhasil dihapus dari planner.");
+      fetchPlannedOutfits(); // Re-fetch data setelah outfit dihapus
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Gagal menghapus outfit.");
+      console.error("Error deleting outfit:", error);
     }
-
-    // Tutup dialog
-    setIsSelectDialogOpen(false);
-    setPlanningDate(null);
-  };
-  const handleRemoveOutfit = (dateKey: string) => {
-    // Logika ini perlu dimodifikasi untuk benar-benar menghapus data
-    const newPlanned = { ...plannedOutfits };
-    delete newPlanned[dateKey as keyof typeof newPlanned];
-    setPlannedOutfits(newPlanned);
-    alert(`Menghapus outfit dari tanggal ${dateKey}`);
   };
 
-  // --- BARU: Fungsi untuk menangani update catatan acara ---
-  const handleUpdateOccasion = (dateKey: string, newOccasion: string) => {
-    setPlannedOutfits((prev) => ({
-      ...prev,
-      [dateKey]: {
-        ...prev[dateKey as keyof typeof prev]!,
+  const handleUpdateOccasion = async (dateKey: string, newOccasion: string) => {
+    const outfitToUpdate = plannedOutfits.get(dateKey);
+    if (!outfitToUpdate) return;
+
+    try {
+      const payload = {
+        date: outfitToUpdate.date,
+        outfitName: outfitToUpdate.outfitName,
         occasion: newOccasion,
-      },
-    }));
-    setEditingOccasion(null);
+        items: outfitToUpdate.items.map((itemRef) => ({
+          itemType: itemRef.itemType,
+          item: itemRef.item._id, // Kirim hanya ID item
+        })),
+      };
+      await planOutfit(payload); // Gunakan planOutfit untuk update
+      toast.success("Catatan acara berhasil diperbarui!");
+      fetchPlannedOutfits(); // Refresh data
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Gagal memperbarui catatan acara."
+      );
+      console.error("Error updating occasion:", error);
+    } finally {
+      setEditingOccasion(null);
+    }
   };
 
   return (
@@ -270,7 +288,7 @@ export function OutfitPlannerPage() {
         open={isSelectDialogOpen}
         onOpenChange={setIsSelectDialogOpen}
         selectedDate={planningDate}
-        onSelectItem={handleSelectItemAndPlan}
+        onOutfitPlanned={handleOutfitPlannedSuccess}
       />
 
       <PageWrapper
@@ -307,107 +325,127 @@ export function OutfitPlannerPage() {
         </div>
 
         {/* Grid Kalender Mingguan */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-5">
-          {weekDays.map((day) => {
-            const dateKey = formatDateToKey(day);
-            const outfit =
-              plannedOutfits[dateKey as keyof typeof plannedOutfits];
-            const weather = dummyWeather[dateKey as keyof typeof dummyWeather];
-            const isToday = formatDateToKey(new Date()) === dateKey;
-
-            return (
+        {isLoadingOutfits ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-5">
+            {Array.from({ length: 7 }).map((_, i) => (
               <Card
-                key={dateKey}
-                className={`flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 ${
-                  isToday ? "border-sky-500 border-2" : "border-slate-200"
-                }`}
+                key={i}
+                className="flex flex-col shadow-md animate-pulse h-[300px]"
               >
-                {/* --- MODIFIKASI: CardHeader dengan Cuaca --- */}
                 <CardHeader className="p-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-sm font-semibold">
-                        {" "}
-                        {day.toLocaleDateString("id-ID", {
-                          weekday: "short",
-                        })}{" "}
-                      </CardTitle>
-                      <p
-                        className={`text-2xl font-bold ${
-                          isToday ? "text-sky-600" : "text-slate-700"
-                        }`}
-                      >
-                        {" "}
-                        {day.getDate()}{" "}
-                      </p>
-                    </div>
-                    {weather && (
-                      <div className="flex flex-col items-center text-slate-500">
-                        {weather.icon}
-                        <span className="text-xs font-semibold">
-                          {weather.temp}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {isToday && (
-                    <Badge variant="secondary" className="w-fit mt-1">
-                      Hari Ini
-                    </Badge>
-                  )}
+                  <Skeleton className="h-4 w-1/3 mb-2" />
+                  <Skeleton className="h-6 w-1/2" />
                 </CardHeader>
-
-                <CardContent className="flex-grow p-2 pt-0 flex flex-col">
-                  <div className="flex-grow min-h-[150px]">
-                    {outfit ? (
-                      <PlannedOutfitCard
-                        outfit={outfit}
-                        onRemove={() => handleRemoveOutfit(dateKey)}
-                      />
-                    ) : (
-                      <EmptySlot onPlan={() => handlePlanOutfit(day)} />
-                    )}
-                  </div>
-
-                  {/* --- BARU: Bagian Catatan Acara --- */}
-                  <div className="mt-2 pt-2 border-t">
-                    {editingOccasion === dateKey ? (
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          handleUpdateOccasion(
-                            dateKey,
-                            e.currentTarget.occasion.value
-                          );
-                        }}
-                      >
-                        <Input
-                          name="occasion"
-                          defaultValue={outfit?.occasion || ""}
-                          className="h-8 text-xs"
-                          autoFocus
-                          onBlur={() => setEditingOccasion(null)}
-                        />
-                      </form>
-                    ) : (
-                      <div
-                        onClick={() => setEditingOccasion(dateKey)}
-                        className="flex items-start text-xs text-slate-600 min-h-[28px] p-1 rounded-md hover:bg-slate-100 cursor-pointer"
-                      >
-                        <Pencil className="w-3 h-3 mr-2 mt-0.5 flex-shrink-0" />
-                        <p className="italic break-words">
-                          {outfit?.occasion || "Tambah catatan..."}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <CardContent className="flex-grow p-2 pt-0 flex flex-col justify-center items-center">
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                  <Skeleton className="h-4 w-full mt-2" />
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-5">
+            {weekDays.map((day) => {
+              const dateKey = formatDateToKey(day);
+              const outfit = plannedOutfits.get(dateKey); // Ambil dari Map
+              const weather =
+                dummyWeather[dateKey as keyof typeof dummyWeather];
+              const isToday = formatDateToKey(new Date()) === dateKey;
 
-        {/* --- BARU: Bagian Saran Outfit Cepat --- */}
+              return (
+                <Card
+                  key={dateKey}
+                  className={`flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 ${
+                    isToday ? "border-sky-500 border-2" : "border-slate-200"
+                  }`}
+                >
+                  <CardHeader className="p-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-sm font-semibold">
+                          {" "}
+                          {day.toLocaleDateString("id-ID", {
+                            weekday: "short",
+                          })}{" "}
+                        </CardTitle>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isToday ? "text-sky-600" : "text-slate-700"
+                          }`}
+                        >
+                          {" "}
+                          {day.getDate()}{" "}
+                        </p>
+                      </div>
+                      {weather && (
+                        <div className="flex flex-col items-center text-slate-500">
+                          {weather.icon}
+                          <span className="text-xs font-semibold">
+                            {weather.temp}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {isToday && (
+                      <Badge variant="secondary" className="w-fit mt-1">
+                        Hari Ini
+                      </Badge>
+                    )}
+                  </CardHeader>
+
+                  <CardContent className="flex-grow p-2 pt-0 flex flex-col">
+                    <div className="flex-grow min-h-[150px]">
+                      {outfit ? (
+                        <PlannedOutfitCard
+                          outfit={outfit}
+                          onRemove={() => handleRemoveOutfit(outfit._id)}
+                        />
+                      ) : (
+                        <EmptySlot onPlan={() => handlePlanOutfit(day)} />
+                      )}
+                    </div>
+
+                    <div className="mt-2 pt-2 border-t">
+                      {editingOccasion === dateKey ? (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleUpdateOccasion(
+                              dateKey,
+                              (e.target as HTMLFormElement).occasion.value
+                            );
+                          }}
+                        >
+                          <Input
+                            name="occasion"
+                            defaultValue={outfit?.occasion || ""}
+                            className="h-8 text-xs"
+                            autoFocus
+                            onBlur={(e) =>
+                              handleUpdateOccasion(dateKey, e.target.value)
+                            } // Simpan saat blur
+                          />
+                        </form>
+                      ) : (
+                        <div
+                          onClick={() => setEditingOccasion(dateKey)}
+                          className="flex items-start text-xs text-slate-600 min-h-[28px] p-1 rounded-md hover:bg-slate-100 cursor-pointer"
+                        >
+                          <Pencil className="w-3 h-3 mr-2 mt-0.5 flex-shrink-0" />
+                          <p className="italic break-words">
+                            {outfit?.occasion || "Tambah catatan..."}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Saran Outfit Cepat (tetap sama) */}
         <Separator className="my-8" />
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center">
