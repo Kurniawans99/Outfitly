@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -113,11 +113,11 @@ export const ClothingFormDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-3xl p-0">
+      <DialogContent className="min-w-4xl p-0 bg-gradient-to-br from-white to-blue-50 border-2 border-blue-100 shadow-2xl">
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* Kolom Kiri: Pratinjau Gambar */}
-            <div className="p-8 flex flex-col items-center justify-center bg-slate-50 md:rounded-l-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 min-h-[700px]">
+            {/* Enhanced Image Upload Section */}
+            <div className="p-8 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white md:rounded-l-xl border-r border-blue-100">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -125,46 +125,67 @@ export const ClothingFormDialog = ({
                 accept="image/*"
                 onChange={handleFileChange}
               />
-              <div
-                className="w-full h-80 border-2 border-dashed rounded-xl flex items-center justify-center text-center text-slate-500 cursor-pointer hover:border-sky-500 hover:bg-sky-50 transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full h-full object-contain rounded-lg p-2"
-                  />
-                ) : (
-                  <div className="space-y-2">
-                    <UploadCloud className="mx-auto h-12 w-12" />
-                    <p className="font-semibold">
-                      Klik untuk mengunggah gambar
-                    </p>
-                    <p className="text-xs">PNG, JPG, atau WEBP (Maks 5MB)</p>
-                  </div>
-                )}
+
+              <div className="w-full max-w-sm">
+                <div
+                  className="w-full h-80 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center text-center text-slate-500 cursor-pointer hover:border-blue-500 hover:bg-gradient-to-br hover:from-blue-100 hover:to-white transition-all duration-300 shadow-sm hover:shadow-lg group"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {previewUrl ? (
+                    <div className="relative w-full h-full overflow-hidden rounded-xl">
+                      <img
+                        src={previewUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 transition-all duration-300 rounded-xl flex items-center justify-center">
+                        <ImageIcon className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
+                        <UploadCloud className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-black text-lg">
+                          Klik untuk mengunggah gambar
+                        </p>
+                        <p className="text-sm text-blue-600 mt-1">
+                          PNG, JPG, atau WEBP (Maks 5MB)
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-6 w-full bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-black font-semibold py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {previewUrl ? "Ganti Gambar" : "Pilih Gambar"}
+                </Button>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-4 w-full"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {previewUrl ? "Ganti Gambar" : "Pilih Gambar"}
-              </Button>
             </div>
 
-            {/* Kolom Kanan: Form Input */}
-            <div className="p-8 flex flex-col space-y-6">
+            {/* Enhanced Form Section */}
+            <div className="p-8 flex flex-col space-y-6 bg-white">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold">
+                <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-blue-600 bg-clip-text text-transparent">
                   {itemToEdit ? "Edit Pakaian" : "Tambah Pakaian Baru"}
                 </DialogTitle>
+                <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full mt-2" />
               </DialogHeader>
-              <div className="space-y-4 flex-grow">
-                <div>
-                  <Label htmlFor="name" className="font-semibold">
+
+              <div className="space-y-5 flex-grow">
+                {/* Name Input */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className="font-bold text-black text-sm uppercase tracking-wide"
+                  >
                     Nama Pakaian
                   </Label>
                   <Input
@@ -173,13 +194,19 @@ export const ClothingFormDialog = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, name: e.target.value }))
                     }
-                    className="mt-1"
+                    className="border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl py-3 text-base shadow-sm"
+                    placeholder="Masukkan nama pakaian..."
                     required
                   />
                 </div>
+
+                {/* Category and Color Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="category" className="font-semibold">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="category"
+                      className="font-bold text-black text-sm uppercase tracking-wide"
+                    >
                       Kategori
                     </Label>
                     <Select
@@ -189,20 +216,31 @@ export const ClothingFormDialog = ({
                       }
                       required
                     >
-                      <SelectTrigger id="category" className="mt-1">
-                        <SelectValue placeholder="Pilih..." />
+                      <SelectTrigger
+                        id="category"
+                        className="border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl py-3 text-base shadow-sm"
+                      >
+                        <SelectValue placeholder="Pilih kategori..." />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl border-blue-200">
                         {categories.map((cat) => (
-                          <SelectItem key={cat} value={cat}>
+                          <SelectItem
+                            key={cat}
+                            value={cat}
+                            className="text-base"
+                          >
                             {cat}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="color" className="font-semibold">
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="color"
+                      className="font-bold text-black text-sm uppercase tracking-wide"
+                    >
                       Warna
                     </Label>
                     <Input
@@ -211,16 +249,23 @@ export const ClothingFormDialog = ({
                       onChange={(e) =>
                         setFormData((p) => ({ ...p, color: e.target.value }))
                       }
-                      className="mt-1"
+                      className="border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl py-3 text-base shadow-sm"
+                      placeholder="Contoh: Merah, Biru..."
                     />
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="tags" className="font-semibold">
+
+                {/* Tags Input */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="tags"
+                    className="font-bold text-black text-sm uppercase tracking-wide"
+                  >
                     Tags
                   </Label>
-                  <p className="text-xs text-slate-500 mb-1">
-                    Pisahkan setiap tag dengan koma.
+                  <p className="text-xs text-gray-500 mb-2">
+                    Pisahkan setiap tag dengan koma (contoh: casual, formal,
+                    musim panas)
                   </p>
                   <Input
                     id="tags"
@@ -235,10 +280,17 @@ export const ClothingFormDialog = ({
                         tags: e.target.value.split(",").map((t) => t.trim()),
                       }))
                     }
+                    className="border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl py-3 text-base shadow-sm"
+                    placeholder="Masukkan tags..."
                   />
                 </div>
-                <div>
-                  <Label htmlFor="notes" className="font-semibold">
+
+                {/* Notes Textarea */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="notes"
+                    className="font-bold text-black text-sm uppercase tracking-wide"
+                  >
                     Catatan
                   </Label>
                   <Textarea
@@ -247,26 +299,32 @@ export const ClothingFormDialog = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, notes: e.target.value }))
                     }
-                    className="mt-1 min-h-[120px]"
+                    className="border-blue-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-base shadow-sm min-h-[100px] resize-none"
+                    placeholder="Tambahkan catatan tentang pakaian ini..."
                   />
                 </div>
               </div>
-              <DialogFooter className="pt-4 border-t">
+
+              <DialogFooter className="pt-6 border-t border-blue-100 gap-3">
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => onOpenChange(false)}
                   disabled={isSaving}
+                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-6 py-3 rounded-xl font-semibold transition-all duration-200"
                 >
                   Batal
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-sky-600 hover:bg-sky-700 text-white w-32"
+                  className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]"
                   disabled={isSaving}
                 >
                   {isSaving ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                      <span>Menyimpan...</span>
+                    </div>
                   ) : (
                     "Simpan"
                   )}
