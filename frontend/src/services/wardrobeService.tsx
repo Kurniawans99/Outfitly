@@ -48,6 +48,7 @@ const getAuthApi = () => {
     baseURL: API_URL,
     headers: {
       Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "69420",
     },
   });
 };
