@@ -72,36 +72,71 @@ const dummyWeather = {
     icon: <CloudRain className="w-5 h-5 text-blue-400" />,
     temp: "27°C",
   },
+  "2025-06-22": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "32°C",
+  },
+  "2025-06-23": {
+    icon: <Cloud className="w-5 h-5 text-slate-400" />,
+    temp: "30°C",
+  },
+  "2025-06-24": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "33°C",
+  },
+  "2025-06-25": {
+    icon: <CloudRain className="w-5 h-5 text-blue-400" />,
+    temp: "28°C",
+  },
+  "2025-06-26": {
+    icon: <Cloud className="w-5 h-5 text-slate-400" />,
+    temp: "29°C",
+  },
+  "2025-06-27": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "31°C",
+  },
+  "2025-06-28": {
+    icon: <CloudRain className="w-5 h-5 text-blue-400" />,
+    temp: "27°C",
+  },
+  "2025-06-29": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "31°C",
+  },
+  "2025-06-30": {
+    icon: <CloudRain className="w-5 h-5 text-blue-400" />,
+    temp: "27°C",
+  },
+  "2025-07-01": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "32°C",
+  },
+  "2025-07-02": {
+    icon: <Cloud className="w-5 h-5 text-slate-400" />,
+    temp: "30°C",
+  },
+  "2025-07-03": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "33°C",
+  },
+  "2025-07-04": {
+    icon: <CloudRain className="w-5 h-5 text-blue-400" />,
+    temp: "28°C",
+  },
+  "2025-07-05": {
+    icon: <Cloud className="w-5 h-5 text-slate-400" />,
+    temp: "29°C",
+  },
+  "2025-07-06": {
+    icon: <Sun className="w-5 h-5 text-amber-500" />,
+    temp: "31°C",
+  },
+  "2025-07-07": {
+    icon: <CloudRain className="w-5 h-5 text-blue-400" />,
+    temp: "27°C",
+  },
 };
-
-// Data Dummy untuk Saran Outfit dari Wardrobe (tetap sama untuk saat ini) ---
-const dummySuggestedOutfits = [
-  {
-    id: "sug1",
-    name: "Monochrome Daily",
-    imageUrl: "/api/placeholder/200/250?text=Mono",
-  },
-  {
-    id: "sug2",
-    name: "Earth Tone Formal",
-    imageUrl: "/api/placeholder/200/250?text=Earth",
-  },
-  {
-    id: "sug3",
-    name: "Weekend Sporty",
-    imageUrl: "/api/placeholder/200/250?text=Sport",
-  },
-  {
-    id: "sug4",
-    name: "Beach Ready",
-    imageUrl: "/api/placeholder/200/250?text=Beach",
-  },
-  {
-    id: "sug5",
-    name: "Smart Workwear",
-    imageUrl: "/api/placeholder/200/250?text=Work",
-  },
-];
 
 const PlannedOutfitCard = ({
   outfit,

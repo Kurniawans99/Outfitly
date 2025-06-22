@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from "react";
+// frontend/src/components/planner/SelectOutfitPlanner.tsx
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +12,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Card } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../ui/card"; // Import CardTitle, CardDescription
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Plus, Loader2, Calendar, Sparkles, Shirt } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Loader2,
+  Calendar,
+  Sparkles,
+  Shirt,
+  Folder, // Import Folder icon
+  ArrowLeft, // Import ArrowLeft icon
+} from "lucide-react";
 import { toast } from "sonner";
-import { getWardrobeItems, ClothingItem } from "@/services/wardrobeService";
+import {
+  getWardrobeItems,
+  getWardrobes,
+  ClothingItem,
+  Wardrobe,
+} from "@/services/wardrobeService"; // Import Wardrobe type
 import {
   InspirationPost,
   InspoItem,
@@ -55,36 +76,36 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
   >(null);
   const [activeTab, setActiveTab] = useState("wardrobe");
   const [wardrobeItems, setWardrobeItems] = useState<ClothingItem[]>([]);
+  const [allWardrobes, setAllWardrobes] = useState<Wardrobe[]>([]); // New state for all wardrobes
+  const [selectedWardrobe, setSelectedWardrobe] = useState<Wardrobe | null>(
+    null
+  ); // New state for selected wardrobe
   const [inspirationItems, setInspirationItems] = useState<InspoItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlanning, setIsPlanning] = useState(false);
 
-  const [userWardrobeId, setUserWardrobeId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const fetchItems = async () => {
-      setIsLoading(true);
-      try {
-        const { getWardrobes } = await import("@/services/wardrobeService");
+  // Memoized function to fetch items based on selected wardrobe/tab
+  const fetchItems = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      if (activeTab === "wardrobe" && !selectedWardrobe) {
+        // If 'wardrobe' tab is active and no specific wardrobe is selected,
+        // fetch all wardrobes to let the user choose
         const wardrobesResponse = await getWardrobes({});
-        if (wardrobesResponse.data.length > 0) {
-          const firstWardrobeId = wardrobesResponse.data[0]._id;
-          setUserWardrobeId(firstWardrobeId);
-
-          const wardrobeItemsRes = await getWardrobeItems(firstWardrobeId, {
-            search: searchTerm,
-          });
-          setWardrobeItems(wardrobeItemsRes.data);
-        } else {
-          setWardrobeItems([]);
-        }
-
+        setAllWardrobes(wardrobesResponse.data);
+        setWardrobeItems([]); // Clear items until a wardrobe is selected
+      } else if (activeTab === "wardrobe" && selectedWardrobe) {
+        // If a specific wardrobe is selected, fetch items from that wardrobe
+        const itemsRes = await getWardrobeItems(selectedWardrobe._id, {
+          search: searchTerm,
+        });
+        setWardrobeItems(itemsRes.data);
+        setAllWardrobes([]); // Clear all wardrobes list when showing items
+      } else if (activeTab === "inspiration" || activeTab === "semua") {
+        // Fetch inspiration items for 'inspiration' or 'semua' tab
         const inspirationPostsRes = await getAllInspirationPosts({
           search: searchTerm,
         });
-
         const allInspoItems: InspoItem[] = [];
         inspirationPostsRes.forEach((post) => {
           post.items.forEach((item) => {
@@ -92,38 +113,76 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
           });
         });
         setInspirationItems(allInspoItems);
-      } catch (error) {
-        toast.error("Gagal memuat item pakaian atau inspirasi.");
-        console.error("Fetch items error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchItems();
-  }, [open, searchTerm]);
+        // If 'semua' tab is active, also fetch all wardrobe items
+        if (activeTab === "semua") {
+          const wardrobesResponse = await getWardrobes({});
+          let allWardrobeItems: ClothingItem[] = [];
+          for (const wardrobe of wardrobesResponse.data) {
+            const itemsRes = await getWardrobeItems(wardrobe._id, {
+              search: searchTerm,
+            });
+            allWardrobeItems = allWardrobeItems.concat(itemsRes.data);
+          }
+          setWardrobeItems(allWardrobeItems);
+        }
+      }
+    } catch (error) {
+      toast.error("Gagal memuat item pakaian atau inspirasi.");
+      console.error("Fetch items error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [open, searchTerm, activeTab, selectedWardrobe]); // Added selectedWardrobe to dependencies
+
+  useEffect(() => {
+    if (open) {
+      fetchItems();
+    } else {
+      // Reset states when dialog closes
+      setSearchTerm("");
+      setSelectedItemId(null);
+      setSelectedItemType(null);
+      setActiveTab("wardrobe");
+      setWardrobeItems([]);
+      setAllWardrobes([]);
+      setSelectedWardrobe(null);
+      setInspirationItems([]);
+      setIsLoading(true);
+      setIsPlanning(false);
+    }
+  }, [open, fetchItems]);
 
   const selectableItems: SelectableItem[] = useMemo(() => {
     let combinedItems: SelectableItem[] = [];
 
-    if (activeTab === "wardrobe" || activeTab === "semua") {
-      const filteredWardrobe = wardrobeItems.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      combinedItems = combinedItems.concat(
-        filteredWardrobe.map((item) => ({ ...item, itemType: "WardrobeItem" }))
-      );
-    }
+    if (activeTab === "wardrobe") {
+      combinedItems = wardrobeItems
+        .filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map((item): SelectableItem => ({ ...item, itemType: "WardrobeItem" })); // Explicitly cast
+    } else if (activeTab === "inspiration") {
+      combinedItems = inspirationItems
+        .filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map((item): SelectableItem => ({ ...item, itemType: "InspoItem" })); // Explicitly cast
+    } else if (activeTab === "semua") {
+      const filteredWardrobe = wardrobeItems
+        .filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map((item): SelectableItem => ({ ...item, itemType: "WardrobeItem" })); // Explicitly cast
 
-    if (activeTab === "inspiration" || activeTab === "semua") {
-      const filteredInspiration = inspirationItems.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      combinedItems = combinedItems.concat(
-        filteredInspiration.map((item) => ({ ...item, itemType: "InspoItem" }))
-      );
-    }
+      const filteredInspiration = inspirationItems
+        .filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map((item): SelectableItem => ({ ...item, itemType: "InspoItem" })); // Explicitly cast
 
+      combinedItems = filteredWardrobe.concat(filteredInspiration);
+    }
     return combinedItems;
   }, [searchTerm, activeTab, wardrobeItems, inspirationItems]);
 
@@ -155,6 +214,7 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
       setSelectedItemType(null);
       setSearchTerm("");
       setActiveTab("wardrobe");
+      setSelectedWardrobe(null); // Reset selected wardrobe on successful plan
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Gagal merencanakan outfit."
@@ -209,7 +269,11 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
 
           <Tabs
             value={activeTab}
-            onValueChange={setActiveTab}
+            onValueChange={(value) => {
+              setActiveTab(value);
+              setSelectedWardrobe(null); // Reset selected wardrobe when changing tabs
+              setSearchTerm(""); // Reset search term when changing tabs
+            }}
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-3 bg-blue-50 border border-blue-200 rounded-xl p-1">
@@ -237,7 +301,7 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
           </Tabs>
         </div>
 
-        {/* Enhanced Grid Section */}
+        {/* Dynamic Content Area based on Tab and Selected Wardrobe */}
         <ScrollArea className="flex-grow my-4 min-h-0">
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pr-4">
@@ -251,68 +315,122 @@ export const SelectOutfitDialog: React.FC<SelectOutfitDialogProps> = ({
                 </div>
               ))}
             </div>
+          ) : activeTab === "wardrobe" && !selectedWardrobe ? (
+            // Display list of wardrobes if 'wardrobe' tab is active and no wardrobe is selected
+            allWardrobes.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pr-4">
+                {allWardrobes.map((wardrobe) => (
+                  <Card
+                    key={wardrobe._id}
+                    onClick={() => setSelectedWardrobe(wardrobe)}
+                    className="group cursor-pointer transition-all duration-300 hover:scale-105 border-2 bg-white shadow-sm hover:shadow-xl border-blue-100 hover:border-blue-300 rounded-xl overflow-hidden"
+                  >
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                      <CardTitle className="text-lg font-bold text-slate-800 line-clamp-1">
+                        {wardrobe.name}
+                      </CardTitle>
+                      <Folder className="w-6 h-6 text-blue-500" />
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="text-sm text-gray-500 line-clamp-2">
+                        {wardrobe.description || "Koleksi pakaian Anda"}
+                      </CardDescription>
+                      <div className="mt-3 text-sm text-gray-600 flex items-center gap-2">
+                        <Shirt className="w-4 h-4" />
+                        <span>{wardrobe.itemCount || 0} items</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <Folder className="w-8 h-8 text-blue-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-600 mb-2">
+                  Tidak ada lemari ditemukan
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Buat lemari di halaman Wardrobe untuk menambah item.
+                </p>
+              </div>
+            )
           ) : selectableItems.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pr-4">
-              {selectableItems.map((item) => (
-                <Card
-                  key={`${item.itemType}-${item._id}`}
-                  onClick={() => {
-                    setSelectedItemId(item._id);
-                    setSelectedItemType(item.itemType);
-                  }}
-                  className={`group cursor-pointer transition-all duration-300 hover:scale-105 border-2 bg-white shadow-sm hover:shadow-xl ${
-                    selectedItemId === item._id &&
-                    selectedItemType === item.itemType
-                      ? "ring-4 ring-blue-500 ring-offset-2 border-blue-500 shadow-xl scale-105"
-                      : "border-blue-100 hover:border-blue-300"
-                  } rounded-xl overflow-hidden`}
+            // Display items if a wardrobe is selected or in other tabs
+            <>
+              {activeTab === "wardrobe" && selectedWardrobe && (
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedWardrobe(null)}
+                  className="mb-4 text-blue-600 hover:bg-blue-50"
                 >
-                  <div className="relative">
-                    <AspectRatio
-                      ratio={4 / 5}
-                      className="overflow-hidden rounded-t-xl"
-                    >
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </AspectRatio>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Kembali ke Daftar Lemari
+                </Button>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pr-4">
+                {selectableItems.map((item) => (
+                  <Card
+                    key={`${item.itemType}-${item._id}`}
+                    onClick={() => {
+                      setSelectedItemId(item._id);
+                      setSelectedItemType(item.itemType);
+                    }}
+                    className={`group cursor-pointer transition-all duration-300 hover:scale-105 border-2 bg-white shadow-sm hover:shadow-xl ${
+                      selectedItemId === item._id &&
+                      selectedItemType === item.itemType
+                        ? "ring-4 ring-blue-500 ring-offset-2 border-blue-500 shadow-xl scale-105"
+                        : "border-blue-100 hover:border-blue-300"
+                    } rounded-xl overflow-hidden`}
+                  >
+                    <div className="relative">
+                      <AspectRatio
+                        ratio={4 / 5}
+                        className="overflow-hidden rounded-t-xl"
+                      >
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </AspectRatio>
 
-                    {/* Selection Indicator */}
-                    {selectedItemId === item._id &&
-                      selectedItemType === item.itemType && (
-                        <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </div>
-                      )}
+                      {/* Selection Indicator */}
+                      {selectedItemId === item._id &&
+                        selectedItemType === item.itemType && (
+                          <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
 
-                    {/* Item Type Badge */}
-                    <div
-                      className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
-                        item.itemType === "WardrobeItem"
-                          ? "bg-blue-500 text-white"
-                          : "bg-purple-500 text-white"
-                      }`}
-                    >
-                      {item.itemType === "WardrobeItem"
-                        ? "Lemari"
-                        : "Inspirasi"}
+                      {/* Item Type Badge */}
+                      <div
+                        className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium ${
+                          item.itemType === "WardrobeItem"
+                            ? "bg-blue-500 text-white"
+                            : "bg-purple-500 text-white"
+                        }`}
+                      >
+                        {item.itemType === "WardrobeItem"
+                          ? "Lemari"
+                          : "Inspirasi"}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="p-4 space-y-2">
-                    <h3 className="font-semibold text-gray-800 truncate text-sm leading-tight">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full inline-block">
-                      {item.category}
-                    </p>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                    <div className="p-4 space-y-2">
+                      <h3 className="font-semibold text-gray-800 truncate text-sm leading-tight">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full inline-block">
+                        {item.category}
+                      </p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-gray-500">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
